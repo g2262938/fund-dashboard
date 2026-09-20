@@ -29,12 +29,26 @@ import json
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-OUTPUT_DIR = Path("/home/ubuntu/.openclaw/workspace/每日选股")
+# 公共指标函数（与 四维选股CANSLIM.py 共用）
+try:
+    from indicators import calc_macd, macd_score as _macd_score, recent_change, get_market as _get_market
+except ImportError:
+    # 兼容旧 import 路径（脚本与 indicators.py 同目录）
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from indicators import calc_macd, macd_score as _macd_score, recent_change, get_market as _get_market
+
+# 把 simple_picker 内的同名函数代理到公共版本（保留阈值参数化的口子）
+# 注意：simple_picker 内部其它代码仍按"用 simple_picker.calc_macd"调用，
+# 直接覆盖下方函数体即可让所有调用方自动走公共实现。
+
+OUTPUT_DIR = Path(os.environ.get("FUND_PICKER_OUTPUT_DIR", "/home/ubuntu/.openclaw/workspace/每日选股"))
+# 【修复】原版在 import 时就 mkdir 远端目录，本地测试会建出 /home/ubuntu/... 这种
+# 不存在的路径。保留默认远端路径兼容服务器，但允许通过环境变量覆盖。
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 TODAY = datetime.date.today().strftime("%Y%m%d")
 REPORT_TIME = datetime.datetime.now().strftime("%H:%M")
 
-CACHE_DIR = Path("/home/ubuntu/.openclaw/workspace/data/kline_cache")
+CACHE_DIR = Path(os.environ.get("FUND_KLINE_CACHE_DIR", "/home/ubuntu/.openclaw/workspace/data/kline_cache"))
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── 行业PE基准 ─────────────────────────────────────────────────
@@ -275,8 +289,17 @@ def get_index_today_return() -> float:
 
 # ─── 腾讯K线拉取（并行 + 缓存）───────────────────────────────────
 
-def fetch_kline_one(code: str, days: int = 30) -> list[dict]:
-    """单只股票拉取最近 N 日 K线（带本地缓存）"""
+def fetch_kline_one(code: str, days: int = 30):
+    """单只股票拉取最近 N 日 K线（带本地缓存）
+
+    返回值：
+        list[dict] — 正常数据
+        None       — 数据获取失败；调用方应按"未知→剔除"处理（不要把空列表当通过）
+
+    原版在异常时返回 []，下游 `if kline and len(kline) >= 6` 守卫会让空列表
+    跳过 MACD / 追高 / 量比全部过滤，股票反而被放行。这是 fail-open 模式
+    对风控是错误的——改为返回 None，调用方必须显式判断。
+    """
     cache_path = CACHE_DIR / f"{code}.json"
     today_str = datetime.date.today().isoformat()
 
@@ -284,8 +307,9 @@ def fetch_kline_one(code: str, days: int = 30) -> list[dict]:
         try:
             cached = json.loads(cache_path.read_text())
             if cached.get("date") == today_str:
-                return cached.get("kline", [])
-        except:
+                kline = cached.get("kline", [])
+                return kline if kline else None   # 空缓存视为失效
+        except Exception:
             pass
 
     if code.startswith(("6", "9")):
@@ -312,13 +336,17 @@ def fetch_kline_one(code: str, days: int = 30) -> list[dict]:
                     "volume": float(row[5]),
                 })
 
+        if not kline:
+            return None
+
         try:
             cache_path.write_text(json.dumps({"date": today_str, "kline": kline}))
-        except:
+        except Exception:
             pass
         return kline
-    except Exception:
-        return []
+    except Exception as e:
+        print(f"  ⚠️ K线获取失败 {code}: {e}", file=sys.stderr)
+        return None
 
 
 def fetch_klines_parallel(codes: list[str], max_workers: int = 30, days: int = 30) -> dict[str, list[dict]]:
@@ -344,75 +372,10 @@ def fetch_klines_parallel(codes: list[str], max_workers: int = 30, days: int = 3
 
 # ─── CANSLIM 前置筛选：MACD 计算 ────────────────────────────────
 
-def calc_macd(closes: list[float]) -> tuple:
-    """
-    计算MACD指标（标准参数：12/26/9）
-    返回: (dif, dea, macd_hist, golden_cross, golden_cross_days)
-    - golden_cross: True = DIF上穿DEA且两者>0（0轴上方金叉）
-    - golden_cross_days: 最近N日内出现金叉（999=无金叉）
-    """
-    if len(closes) < 34:
-        return None, None, None, False, 999
-
-    # EMA12 / EMA26
-    ema12 = closes[0]
-    ema26 = closes[0]
-    a12 = 2 / 13
-    a26 = 2 / 27
-    dif_list = []
-    for c in closes:
-        ema12 = ema12 * (1 - a12) + c * a12
-        ema26 = ema26 * (1 - a26) + c * a26
-        dif_list.append(ema12 - ema26)
-
-    # DEA（9日EMA of DIF）
-    dea_list = []
-    a9 = 2 / 10
-    for i, d in enumerate(dif_list):
-        if i < 26:
-            dea_list.append(d)
-        else:
-            dea_list.append(dea_list[-1] * (1 - a9) + d * a9)
-
-    # MACD柱 = (DIF - DEA) * 2
-    hist_list = [(dif_list[i] - dea_list[i]) * 2 for i in range(len(dif_list))]
-
-    # 取最近60日检测金叉
-    dif60 = dif_list[-60:]
-    dea60 = dea_list[-60:]
-
-    golden_cross = False
-    golden_cross_days = 999
-    for i in range(len(dif60) - 1, max(0, len(dif60) - 5), -1):
-        # 今日DIF>DEA 且 两者都在0轴上方
-        if dif60[i] > dea60[i] and dif60[i] > 0 and dea60[i] > 0:
-            # 昨日DIF<=DEA
-            if dif60[i-1] <= dea60[i-1]:
-                golden_cross = True
-                golden_cross_days = len(dif60) - 1 - i
-                break
-
-    return dif_list[-1], dea_list[-1], hist_list[-1], golden_cross, golden_cross_days
-
-
-def macd_score(closes: list[float]) -> tuple[int, str]:
-    """
-    MACD 0轴上方 + 金叉检测（CANSLIM核心技术指标）
-    返回: (分数, 说明文字)
-    """
-    dif, dea, hist, golden_cross, gc_days = calc_macd(closes)
-    if dif is None:
-        return 0, "MACD数据不足"
-    if dif <= 0 or dea <= 0:
-        return 0, f"MACD<0轴(DIF={dif:.3f})"
-    if golden_cross and gc_days <= 1:
-        return 20, f"MACD0轴金叉+1日"
-    elif golden_cross and gc_days <= 4:
-        return 15, f"MACD0轴金叉{gc_days}日前"
-    elif golden_cross and gc_days <= 10:
-        return 10, f"MACD0轴金叉{gc_days}日前"
-    else:
-        return 5, "MACD0轴上方（无金叉）"
+# calc_macd / macd_score 走 indicators.py 公共版本（上方 from import 已注入 _macd_score）
+def macd_score(closes):
+    """MACD 评分（直接代理到 indicators.macd_score）"""
+    return _macd_score(closes)
 
 
 # ─── CANSLIM 前置筛选：追高过滤 ─────────────────────────────────
@@ -542,20 +505,25 @@ def pass_form_filter(quote: dict, kline: list[dict], index_return: float) -> tup
     # （已在 main() 的 classify 之后统一处理降级，这里跳过）
 
     # 需要K线的CANSLIM过滤
-    if kline and len(kline) >= 6:
-        closes = [k["close"] for k in kline]
+    # 【fail-closed 修复】原版 `if kline and len(kline) >= 6` 在数据为空时
+    # 静默跳过全部追高/量比过滤，相当于"拿不到数据 = 通过"，是方向性错误。
+    # 改为：数据不足时直接剔除。
+    if not kline or len(kline) < 6:
+        return False, "K线数据不足(<6日)，剔除"
 
-        # 涨停股跳过全部追高过滤
-        if not is_limit_up:
-            ok, reason = check_chase_filter(closes, today_pct)
-            if not ok:
-                return False, f"CANSLIM追高:{reason}"
+    closes = [k["close"] for k in kline]
 
-        # 量比过滤（涨停宽松：阈值1.0→0.5）
-        vol_ratio = get_volume_ratio(quote, kline)
-        vol_thresh = 0.5 if is_limit_up else 1.0
-        if vol_ratio is not None and vol_ratio < vol_thresh:
-            return False, f"量比{vol_ratio:.2f}<{vol_thresh}(CANSLIM)"
+    # 涨停股跳过全部追高过滤
+    if not is_limit_up:
+        ok, reason = check_chase_filter(closes, today_pct)
+        if not ok:
+            return False, f"CANSLIM追高:{reason}"
+
+    # 量比过滤（涨停宽松：阈值1.0→0.5）
+    vol_ratio = get_volume_ratio(quote, kline)
+    vol_thresh = 0.5 if is_limit_up else 1.0
+    if vol_ratio is not None and vol_ratio < vol_thresh:
+        return False, f"量比{vol_ratio:.2f}<{vol_thresh}(CANSLIM)"
 
     return True, ""
 
@@ -665,7 +633,13 @@ def score_quality(quote: dict) -> int:
 
 
 def score_volume_price(quote: dict, kline: list[dict]) -> int:
-    """维度4 量价（25分）"""
+    """维度4 量价（25分）
+
+    注意：这里的 `if kline and len(kline) >= 5` 在数据不足时直接给默认分
+    （vol_ratio=1.0、above_ma5=0），属于"无数据不加分"模式，方向上 OK——
+    与 pass_form_filter 的"无数据 = 通过"方向不同。这里是评分函数，
+    数据不足最多不给加分，不会让坏股票通过筛选。
+    """
     close = quote.get("current", 0)
     high = quote.get("high", 0)
     today_volume = quote.get("volume", 0)
