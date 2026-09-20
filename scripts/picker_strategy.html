@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>选股策略流程图</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    background: #ffffff;
+    color: #1a2332;
+    padding: 32px;
+    min-height: 100vh;
+}
+.container { max-width: 1100px; margin: 0 auto; }
+header {
+    border-bottom: 3px solid #005096;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+}
+h1 { font-size: 22px; color: #003d75; }
+.subtitle { font-size: 12px; color: #5a6b7d; margin-top: 6px; letter-spacing: 0.3px; }
+
+.toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+.btn {
+    padding: 8px 16px;
+    background: #005096;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+}
+.btn:hover { background: #003d75; }
+.btn.outline { background: #fff; color: #005096; border: 1px solid #005096; }
+.btn.outline:hover { background: #e6f3fb; }
+
+.mermaid {
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.notes {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: #e6f3fb;
+    border-left: 3px solid #005096;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: #1a2332;
+    line-height: 1.7;
+}
+.notes strong { color: #003d75; }
+
+footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid #e1e8ed;
+    color: #8b95a3;
+    font-size: 11px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📊 选股策略 v5.1 — simple_picker 流程图</h1>
+        <div class="subtitle">simple_picker.py · 2026-07-06 · 找『明日能继续涨』的股 · v5.1:顶点过滤+动量防追高+市值过滤+大盘风控</div>
+    </header>
+
+    <div class="toolbar">
+        <button class="btn" onclick="exportPNG()">📥 导出 PNG</button>
+        <button class="btn outline" onclick="zoomIn()">放大 +</button>
+        <button class="btn outline" onclick="zoomOut()">缩小 −</button>
+        <button class="btn outline" onclick="resetZoom()">重置</button>
+    </div>
+
+    <div class="mermaid" id="diagram">
+flowchart TD
+    Start([启动选股引擎 v5.1])
+    Start --> Pool[/数据源: akshare 全A股 5316只/]
+    Pool --> Clean[前置清洗: 剔除ST / 北交所]
+    Clean --> Index[①获取上证指数今日涨跌幅]
+    Index --> Tencent[②腾讯实时行情<br/>分50批请求 → 4996只有效]
+
+    Tencent --> Stage1[阶段一 硬过滤 3项]
+    Stage1 --> F2{PE极端<br/>小于0或大于200}
+    Stage1 --> F3{低流动性<br/>换手率小于0.1%}
+    Stage1 --> F4{低价股<br/>股价低于2元}
+    F2 --> |否| Next1
+    F3 --> |否| Next1
+    F4 --> |否| Next1
+    F2 --> |是| Reject1([排除])
+    F3 --> |是| Reject2([排除])
+    F4 --> |是| Reject3([排除])
+    Next1 --> Passed1[通过硬过滤<br/>约3200只]
+
+    Passed1 --> Stage2["阶段二 形态过滤<br/>剔冲高回落 0到10分"]
+    Stage2 --> FormCheck{形态分不低于6}
+    FormCheck --> |否| Reject4([排除冲高回落])
+    FormCheck --> |是| Passed2[通过形态<br/>约2700只]
+
+    Passed2 --> Kline[③腾讯K线拉取<br/>25日日K 并行30线程<br/>本地缓存增量]
+    Kline --> Stage3[阶段三 四维打分 100分满分]
+
+    Stage3 --> V["价值 25分<br/>PE 行业百分位<br/>成长股加2分容忍"]
+    Stage3 --> M["动量 25分<br/>20日累计涨幅为主<br/>5日和今日为辅"]
+    Stage3 --> Q["质量 25分<br/>市值分级 + 稳定性加成"]
+    Stage3 --> VP["量价 25分<br/>收盘位置 + 量比 + 5日均线偏离"]
+
+    V --> Sum[总分汇总]
+    M --> Sum
+    Q --> Sum
+    VP --> Sum
+
+    Sum --> Stage4[阶段四 双模式分类]
+    Stage4 --> C1{总分 至少88?}
+    Stage4 --> C2{总分 至少75?}
+    Stage4 --> C3{总分 至少65?}
+    C1 --> |是| Strong["🟢 强势"]
+    C1 --> |否| C2
+    C2 --> |是| Steady["🟡 稳健"]
+    C2 --> |否| C3
+    C3 --> |是| Observe["⚪ 观察"]
+    C3 --> |否| Exclude["🔴 排除"]
+
+    Strong --> Output
+    Steady --> Output
+    Observe --> Output
+    Exclude --> Output
+
+    Output[生成报告<br/>综合选股 和 推荐 md]
+    Output --> Push[推送微信]
+    Push --> Done([完成 用户收到日报])
+
+    classDef startEnd fill:#ffffff,stroke:#005096,stroke-width:2px,color:#003d75,font-weight:bold
+    classDef process fill:#ffffff,stroke:#005096,stroke-width:1px,color:#1a2332
+    classDef decision fill:#e6f3fb,stroke:#005096,stroke-width:2px,color:#003d75
+    classDef dataNode fill:#fef9c3,stroke:#f59e0b,stroke-width:1px,color:#1a2332
+    classDef rejectNode fill:#fff0f0,stroke:#d93025,stroke-width:1px,color:#d93025
+    classDef strongNode fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#16a34a
+    classDef steadyNode fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#ca8a04
+    classDef observeNode fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#64748b
+    classDef excludeNode fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#94a3b8
+
+    class Start,Done startEnd
+    class Pool,Clean,Index,Tencent,Stage1,Stage2,Kline,Stage3,Stage4,V,M,Q,VP,Sum,Output,Push,Passed1,Passed2 process
+    class F2,F3,F4,FormCheck,C1,C2,C3 decision
+    class Reject1,Reject2,Reject3,Reject4 rejectNode
+    class Strong strongNode
+    class Steady steadyNode
+    class Observe observeNode
+    class Exclude excludeNode
+    </div>
+
+    <div class="notes">
+        <strong>💡 v5.1 vs v4.1 核心改动（基于回测反馈）</strong><br/>
+        • <strong>顶点过滤</strong>:当日涨幅>5%直接排除（主力拉高出货风险高，次日回调概率大）<br/>
+        • <strong>动量防追高</strong>:当日涨幅>4%的启动型降一档（防止买在日内顶点）<br/>
+        • <strong>市值过滤</strong>:微盘股(<50亿)直接排除（减少噪音信号）<br/>
+        • <strong>大盘风控</strong>:指数下跌-1%以上时强势股自动降级为稳健；-2%以上全部暂停<br/>
+        • <strong>止盈止损</strong>:硬止损-7%→-10%（给好股票更多喘息空间，用时间换空间）
+        <strong>📊 今日(2026-07-06)v5.1实测结果</strong>:<br/>
+        🟢强势 24只(中国人寿/海油/人保/平安/美的/格力/中远海控/国泰海通) | 🟡稳健 324只 | ⚪观察 201只 | 🔴排除 1171只<br/>
+        耗时 ~43秒(腾讯K线并行拉取)<br/><br/>
+        <strong>📈 模拟测试(关键场景)</strong>:<br/>
+        • 紫金矿业(主升浪龙头):86分 🟡稳健(动量23 + 价值19)<br/>
+        • 宁德时代(高PE成长股):75分 🟡稳健(PE=35不再被严重扣分)<br/>
+        • 山西汾酒:78分 🟡稳健 | 国泰海通:91分 🟢强势<br/>
+        <strong>回测结论</strong>:<br/>
+        v4.1回测胜率27.6%,期望-2.21%(127笔) | 盈亏比1.5 | 硬止损触发60%<br/>
+        v5.1改动方向:顶点过滤+防追高+大盘风控+止损放宽至-10%<br/>
+        <strong>🛑 重要:</strong>选股策略只是第一步,必须配合止盈止损规则(position_manager.py)才能实现盈利<br/>
+        持有期:5日(波段)/20日(中线) | 硬止损-10% | 移动止盈-5%卖一半/-10%全卖 | 时间止损10日
+    </div>
+
+    <footer>
+        小龙虾接盘系统 · simple_picker v4.1 · 评分曲线细化版 · 找可持续上涨
+    </footer>
+
+<script>
+let scale = 1;
+const diagram = document.getElementById('diagram');
+
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    themeVariables: {
+        primaryColor: '#ffffff',
+        primaryTextColor: '#1a2332',
+        primaryBorderColor: '#005096',
+        lineColor: '#005096',
+        secondaryColor: '#e6f3fb',
+        tertiaryColor: '#fef9c3',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif',
+        fontSize: '13px'
+    },
+    flowchart: {
+        curve: 'basis',
+        padding: 16,
+        nodeSpacing: 40,
+        rankSpacing: 50,
+        htmlLabels: true
+    }
+});
+
+function zoomIn() {
+    scale = Math.min(scale * 1.2, 3);
+    diagram.style.transform = `scale(${scale})`;
+    diagram.style.transformOrigin = 'top center';
+}
+function zoomOut() {
+    scale = Math.max(scale / 1.2, 0.4);
+    diagram.style.transform = `scale(${scale})`;
+    diagram.style.transformOrigin = 'top center';
+}
+function resetZoom() {
+    scale = 1;
+    diagram.style.transform = 'scale(1)';
+}
+function exportPNG() {
+    const svg = diagram.querySelector('svg');
+    if (!svg) { alert('图表未加载完成'); return; }
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = svg.clientWidth || 1100;
+        canvas.height = svg.clientHeight || 1800;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        const link = document.createElement('a');
+        link.download = `选股策略v3_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+    img.src = url;
+}
+</script>
+</body>
+</html>
