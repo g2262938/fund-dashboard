@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美股新闻信息中心 · 易方达基金仪表板</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-2: #1c2230;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --up: #ff6b6b;     /* A股惯例：涨红跌绿 */
+    --down: #4ade80;
+    --neutral: #facc15;
+    --accent: #58a6ff;
+    --bull-bg: rgba(255, 107, 107, 0.12);
+    --bear-bg: rgba(74, 222, 128, 0.12);
+    --neutral-bg: rgba(250, 204, 21, 0.12);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --panel-2: #f9fafb;
+      --border: #e5e7eb;
+      --text: #1f2937;
+      --text-dim: #6b7280;
+      --bull-bg: rgba(239, 68, 68, 0.08);
+      --bear-bg: rgba(34, 197, 94, 0.08);
+      --neutral-bg: rgba(234, 179, 8, 0.08);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ==== Header ==== */
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  header .meta {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .header-stats strong { color: var(--text); margin-left: 4px; }
+
+  /* ==== Tabs ==== */
+  .tabs {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+  }
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ==== Toolbar (filter / search) ==== */
+  .toolbar {
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .toolbar input, .toolbar select {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .toolbar input { min-width: 200px; }
+  .toolbar label { font-size: 13px; color: var(--text-dim); }
+
+  /* ==== Content ==== */
+  main { padding: 20px 24px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ==== Market view ==== */
+  .market-summary {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .market-summary h2 {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .stat-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .stat-card .label { font-size: 12px; color: var(--text-dim); }
+  .stat-card .value { font-size: 24px; font-weight: 600; margin-top: 4px; }
+  .stat-card .sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+
+  /* Sector ranking */
+  .ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .rank-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .rank-card h3 {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .rank-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-item:last-child { border-bottom: none; }
+  .rank-item .name { font-size: 14px; }
+  .rank-item .score { font-size: 13px; font-family: monospace; }
+  .rank-item .empty { color: var(--text-dim); font-size: 13px; font-style: italic; }
+
+  /* Ticker cards (stock view) */
+  .ticker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+  }
+  .ticker-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.15s;
+  }
+  .ticker-card:hover { border-color: var(--accent); }
+  .ticker-card .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .ticker-card .symbol {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .ticker-card .name {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .ticker-card .meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .badge.bull { background: var(--bull-bg); color: var(--up); }
+  .badge.bear { background: var(--bear-bg); color: var(--down); }
+  .badge.neutral { background: var(--neutral-bg); color: var(--neutral); }
+
+  .news-list { margin-top: 12px; }
+  .news-item {
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .news-item:first-child { border-top: none; padding-top: 4px; }
+  .news-title {
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+  }
+  .news-title:hover { color: var(--accent); }
+  .news-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .news-meta .publisher {
+    font-weight: 500;
+  }
+  .news-meta .time { font-family: monospace; }
+
+  /* Sector view */
+  .sector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .sector-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .sector-card .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .sector-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .sector-card .sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .ticker-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ticker-row:last-child { border-bottom: none; }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 60px 20px;
+    font-size: 14px;
+  }
+
+  /* Footer */
+  footer {
+    padding: 20px 24px;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header-stats { flex-direction: column; gap: 4px; }
+    .ticker-grid, .sector-grid, .ranking-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🇺🇸 美股新闻信息中心</h1>
+    <div class="meta">利空/利多分析 · 板块影响 · 大盘走势</div>
+  </div>
+  <div class="header-stats" id="header-stats">
+    <span>标的 <strong id="stat-tickers">-</strong></span>
+    <span>新闻 <strong id="stat-news">-</strong></span>
+    <span>板块 <strong id="stat-sectors">-</strong></span>
+    <span>数据源 <strong id="stat-source">-</strong></span>
+    <span>更新于 <strong id="stat-updated">-</strong></span>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="market">大盘视角</div>
+  <div class="tab" data-tab="sector">板块视角</div>
+  <div class="tab" data-tab="ticker">标的视角</div>
+</div>
+
+<div class="toolbar">
+  <label>搜索 ticker：<input type="text" id="search-input" placeholder="AAPL / 苹果 / Tech..."></label>
+  <label>板块筛选：
+    <select id="sector-filter">
+      <option value="">全部</option>
+    </select>
+  </label>
+  <label>情绪筛选：
+    <select id="sentiment-filter">
+      <option value="">全部</option>
+      <option value="利好">仅利好</option>
+      <option value="利空">仅利空</option>
+      <option value="中性">仅中性</option>
+    </select>
+  </label>
+</div>
+
+<main>
+  <!-- ============== 大盘视角 ============== -->
+  <section class="tab-content active" id="tab-market">
+    <div class="market-summary">
+      <h2>整体情绪</h2>
+      <div class="market-grid" id="market-grid">
+        <div class="empty">加载中...</div>
+      </div>
+    </div>
+    <div class="ranking-grid">
+      <div class="rank-card">
+        <h3>🔴 Top 利空板块（拖累大盘）</h3>
+        <div id="top-bearish"></div>
+      </div>
+      <div class="rank-card">
+        <h3>🟢 Top 利多板块（支撑大盘）</h3>
+        <div id="top-bullish"></div>
+      </div>
+    </div>
+    <div class="rank-card" style="margin-top: 16px;">
+      <h3>📊 影响最严重的标的（新闻数 × |情绪|）</h3>
+      <div id="impacted-tickers"></div>
+    </div>
+  </section>
+
+  <!-- ============== 板块视角 ============== -->
+  <section class="tab-content" id="tab-sector">
+    <div class="sector-grid" id="sector-grid">
+      <div class="empty">加载中...</div>
+    </div>
+  </section>
+
+  <!-- ============== 标的视角 ============== -->
+  <section class="tab-content" id="tab-ticker">
+    <div class="ticker-grid" id="ticker-grid">
+      <div class="empty">加载中...</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  数据来源：Finnhub / Yahoo Finance · Sentiment 由关键词词典法计算 · 本工具仅供研究参考，不构成投资建议
+</footer>
+
+<script>
+// ============================================================
+// 全局状态
+// ============================================================
+let DATA = null;
+let CURRENT_TAB = 'market';
+
+// ============================================================
+// 数据加载
+// ============================================================
+async function loadData() {
+  try {
+    const res = await fetch('data/us_news_latest.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    DATA = await res.json();
+    onDataLoaded();
+  } catch (e) {
+    console.error('加载数据失败:', e);
+    document.querySelectorAll('.empty').forEach(el => {
+      el.textContent = '⚠️ 数据加载失败：' + e.message + '。请确保运行 python3 scripts/us_news/build.py';
+    });
+  }
+}
+
+// ============================================================
+// 工具函数
+// ============================================================
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function fmtNum(n) {
+  if (n == null) return '-';
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  return n.toString();
+}
+
+function fmtTimeAgo(unixSec) {
+  if (!unixSec) return '-';
+  const diff = (Date.now() / 1000) - unixSec;
+  if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
+  return Math.floor(diff / 86400) + ' 天前';
+}
+
+function fmtScore(s) {
+  if (s == null) return '-';
+  return (s > 0 ? '+' : '') + s.toFixed(2);
+}
+
+function sentimentClass(label) {
+  if (label === '利好') return 'bull';
+  if (label === '利空') return 'bear';
+  return 'neutral';
+}
+
+function sentimentIcon(label) {
+  if (label === '利好') return '🟢';
+  if (label === '利空') return '🔴';
+  return '🟡';
+}
+
+// ============================================================
+// 渲染：header + 大盘视角
+// ============================================================
+function onDataLoaded() {
+  // 头部统计
+  document.getElementById('stat-tickers').textContent = DATA.universe_count;
+  document.getElementById('stat-news').textContent = DATA.news_count;
+  document.getElementById('stat-sectors').textContent = DATA.per_sector.length;
+  document.getElementById('stat-source').textContent = DATA.data_source;
+  const dt = new Date(DATA.generated_at_local);
+  document.getElementById('stat-updated').textContent = dt.toLocaleString('zh-CN', {hour12: false});
+
+  // 板块下拉
+  const sel = document.getElementById('sector-filter');
+  DATA.per_sector.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.sector;
+    opt.textContent = `${s.sector_zh} (${s.ticker_count})`;
+    sel.appendChild(opt);
+  });
+
+  renderMarket();
+  renderSectors();
+  renderTickers();
+}
+
+// ----- 大盘视角 -----
+function renderMarket() {
+  const mv = DATA.market_view;
+  const overall = mv.overall;
+
+  // 整体卡片
+  document.getElementById('market-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="label">整体情绪</div>
+      <div class="value" style="color: var(--${sentimentClass(overall.dominant_label) === 'bull' ? 'up' : sentimentClass(overall.dominant_label) === 'bear' ? 'down' : 'neutral'})">
+        ${sentimentIcon(overall.dominant_label)} ${escapeHtml(overall.dominant_label)}
+      </div>
+      <div class="sub">加权平均分 ${fmtScore(overall.aggregate_score)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">利好新闻</div>
+      <div class="value" style="color: var(--up)">${overall.bullish_count}</div>
+      <div class="sub">🟢 占 ${(overall.bullish_count / DATA.news_count * 100).toFixed(0)}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">利空新闻</div>
+      <div class="value" style="color: var(--down)">${overall.bearish_count}</div>
+      <div class="sub">🔴 占 ${(overall.bearish_count / DATA.news_count * 100).toFixed(0)}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">中性新闻</div>
+      <div class="value" style="color: var(--neutral)">${overall.neutral_count}</div>
+      <div class="sub">🟡 占 ${(overall.neutral_count / DATA.news_count * 100).toFixed(0)}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">市值门槛</div>
+      <div class="value">$${(DATA.market_cap_min_usd / 1e9).toFixed(0)}B</div>
+      <div class="sub">${DATA.universe_count} 只标的入池</div>
+    </div>
+  `;
+
+  // Top 利空 / 利多板块
+  const bearEl = document.getElementById('top-bearish');
+  if (mv.top_bearish_sectors.length === 0) {
+    bearEl.innerHTML = '<div class="empty">无利空板块</div>';
+  } else {
+    bearEl.innerHTML = mv.top_bearish_sectors.map(s => `
+      <div class="rank-item">
+        <span class="name">${escapeHtml(s.sector_zh)} <span style="color: var(--text-dim); font-size: 11px;">(${s.ticker_count} 票)</span></span>
+        <span class="score" style="color: var(--down);">${fmtScore(s.sentiment_summary.aggregate_score)}</span>
+      </div>
+    `).join('');
+  }
+
+  const bullEl = document.getElementById('top-bullish');
+  if (mv.top_bullish_sectors.length === 0) {
+    bullEl.innerHTML = '<div class="empty">无利多板块</div>';
+  } else {
+    bullEl.innerHTML = mv.top_bullish_sectors.map(s => `
+      <div class="rank-item">
+        <span class="name">${escapeHtml(s.sector_zh)} <span style="color: var(--text-dim); font-size: 11px;">(${s.ticker_count} 票)</span></span>
+        <span class="score" style="color: var(--up);">${fmtScore(s.sentiment_summary.aggregate_score)}</span>
+      </div>
+    `).join('');
+  }
+
+  // 影响最严重的标的
+  const impEl = document.getElementById('impacted-tickers');
+  impEl.innerHTML = mv.most_impacted_tickers.map(t => {
+    const cls = sentimentClass(t.sentiment_summary.dominant_label);
+    return `
+      <div class="rank-item">
+        <span class="name">
+          <strong style="color: var(--accent);">${escapeHtml(t.ticker)}</strong>
+          <span style="color: var(--text-dim); margin-left: 6px;">${escapeHtml(t.name || '')}</span>
+        </span>
+        <span class="badge ${cls}">${fmtScore(t.sentiment_summary.aggregate_score)} (${t.news_count}条)</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ----- 板块视角 -----
+function renderSectors() {
+  const grid = document.getElementById('sector-grid');
+  grid.innerHTML = DATA.per_sector.map(s => {
+    const cls = sentimentClass(s.sentiment_summary.dominant_label);
+    return `
+      <div class="sector-card" data-sector="${escapeHtml(s.sector)}">
+        <div class="head">
+          <div>
+            <h3>${escapeHtml(s.sector_zh)}</h3>
+            <div class="sub">${escapeHtml(s.sector)} · ${s.ticker_count} 票 · ${s.news_count} 条新闻</div>
+          </div>
+          <span class="badge ${cls}">${escapeHtml(s.sentiment_summary.dominant_label)} ${fmtScore(s.sentiment_summary.aggregate_score)}</span>
+        </div>
+        <div>
+          ${s.tickers.map(t => {
+            const tc = sentimentClass(t.dominant_label);
+            return `
+              <div class="ticker-row">
+                <span><strong style="color: var(--accent);">${escapeHtml(t.ticker)}</strong>
+                <span style="color: var(--text-dim); margin-left: 6px;">${escapeHtml(t.name || '')}</span></span>
+                <span class="badge ${tc}">${fmtScore(t.aggregate_score)}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ----- 标的视角 -----
+function renderTickers() {
+  applyTickerFilter();
+}
+
+function tickerMatchesFilter(t) {
+  const search = document.getElementById('search-input').value.trim().toLowerCase();
+  const sectorSel = document.getElementById('sector-filter').value;
+  const sentSel = document.getElementById('sentiment-filter').value;
+
+  if (search) {
+    const blob = (t.ticker + ' ' + (t.name || '') + ' ' + (t.sector_zh || '') + ' ' + (t.sector || '')).toLowerCase();
+    if (!blob.includes(search)) return false;
+  }
+  if (sectorSel && t.sector !== sectorSel) return false;
+  if (sentSel && t.sentiment_summary.dominant_label !== sentSel) return false;
+  return true;
+}
+
+function applyTickerFilter() {
+  const filtered = DATA.per_ticker.filter(tickerMatchesFilter);
+  const grid = document.getElementById('ticker-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty">无匹配标的</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(t => {
+    const cls = sentimentClass(t.sentiment_summary.dominant_label);
+    const mc = t.market_cap ? `$${(t.market_cap / 1e9).toFixed(0)}B` : '市值未取';
+    return `
+      <div class="ticker-card" data-ticker="${escapeHtml(t.ticker)}">
+        <div class="head">
+          <div>
+            <div class="symbol">${escapeHtml(t.ticker)}</div>
+            <div class="name">${escapeHtml(t.name || t.ticker)}</div>
+            <div class="meta">${escapeHtml(t.sector_zh)} · ${escapeHtml(t.sub_industry || '')} · ${mc}</div>
+          </div>
+          <span class="badge ${cls}">${escapeHtml(t.sentiment_summary.dominant_label)} ${fmtScore(t.sentiment_summary.aggregate_score)}</span>
+        </div>
+        <div class="news-list">
+          ${(t.recent_news || []).map(n => {
+            const nCls = sentimentClass(n.sentiment.label);
+            return `
+                <div class="news-item">
+                  <span class="badge ${nCls}" style="font-size: 10px; padding: 2px 6px;">${escapeHtml(n.sentiment.label)}</span>
+                  <a class="news-title" href="${escapeHtml(n.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(n.title)}</a>
+                  <div class="news-meta">
+                    <span class="publisher">${escapeHtml(n.publisher || '')}</span>
+                    <span>·</span>
+                    <span class="time">${fmtTimeAgo(n.published_at)}</span>
+                  </div>
+                </div>
+              `;
+          }).join('') || '<div class="empty">暂无新闻</div>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// 交互：tab / search / filter
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    CURRENT_TAB = tab.dataset.tab;
+  });
+});
+
+document.getElementById('search-input').addEventListener('input', applyTickerFilter);
+document.getElementById('sector-filter').addEventListener('change', applyTickerFilter);
+document.getElementById('sentiment-filter').addEventListener('change', applyTickerFilter);
+
+// ============================================================
+// 启动
+// ============================================================
+loadData();
+
+// 自动每 5 分钟刷新（如果浏览器没动）
+let lastFocus = Date.now();
+window.addEventListener('focus', () => lastFocus = Date.now());
+setInterval(() => {
+  if (Date.now() - lastFocus < 60_000 && document.visibilityState === 'visible') {
+    loadData();
+  }
+}, 5 * 60 * 1000);
+
+</script>
+</body>
+</html>

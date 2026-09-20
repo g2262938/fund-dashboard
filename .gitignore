@@ -30,3 +30,7 @@ yjyg_loss.html      # 同上
 
 # 测试
 .fund_test_*/
+
+# 美股新闻信息中心构建产物（每次 build 重新生成，不入库）
+data/us_news_latest.json
+# 但保留 us_news_mock.json（开发用的种子数据，可复现）

@@ -1,0 +1,669 @@
+{
+  "universe": [
+    {
+      "ticker": "AAPL",
+      "market_cap": 3750000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Technology Hardware",
+      "name": "Apple Inc.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "MSFT",
+      "market_cap": 3400000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Systems Software",
+      "name": "Microsoft Corp.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "NVDA",
+      "market_cap": 4200000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Semiconductors",
+      "name": "NVIDIA Corp.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "AVGO",
+      "market_cap": 800000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Semiconductors",
+      "name": "Broadcom Inc.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "ORCL",
+      "market_cap": 480000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Systems Software",
+      "name": "Oracle Corp.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "AMD",
+      "market_cap": 320000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Semiconductors",
+      "name": "Advanced Micro Devices",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "CRM",
+      "market_cap": 280000000000,
+      "sector": "Technology",
+      "sector_zh": "科技",
+      "sub_industry": "Application Software",
+      "name": "Salesforce Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "GOOGL",
+      "market_cap": 2300000000000,
+      "sector": "Communication Services",
+      "sector_zh": "通信服务",
+      "sub_industry": "Interactive Media & Services",
+      "name": "Alphabet Inc. (Class A)",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "META",
+      "market_cap": 1500000000000,
+      "sector": "Communication Services",
+      "sector_zh": "通信服务",
+      "sub_industry": "Interactive Media & Services",
+      "name": "Meta Platforms",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "NFLX",
+      "market_cap": 380000000000,
+      "sector": "Communication Services",
+      "sector_zh": "通信服务",
+      "sub_industry": "Movies & Entertainment",
+      "name": "Netflix Inc.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "T",
+      "market_cap": 165000000000,
+      "sector": "Communication Services",
+      "sector_zh": "通信服务",
+      "sub_industry": "Integrated Telecommunication Services",
+      "name": "AT&T Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "AMZN",
+      "market_cap": 2100000000000,
+      "sector": "Consumer Discretionary",
+      "sector_zh": "可选消费",
+      "sub_industry": "Internet & Direct Marketing Retail",
+      "name": "Amazon.com Inc.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "TSLA",
+      "market_cap": 850000000000,
+      "sector": "Consumer Discretionary",
+      "sector_zh": "可选消费",
+      "sub_industry": "Automobile Manufacturers",
+      "name": "Tesla Inc.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "HD",
+      "market_cap": 410000000000,
+      "sector": "Consumer Discretionary",
+      "sector_zh": "可选消费",
+      "sub_industry": "Specialty Retail",
+      "name": "Home Depot",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "MCD",
+      "market_cap": 215000000000,
+      "sector": "Consumer Discretionary",
+      "sector_zh": "可选消费",
+      "sub_industry": "Restaurants",
+      "name": "McDonald's Corp.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "SBUX",
+      "market_cap": 110000000000,
+      "sector": "Consumer Discretionary",
+      "sector_zh": "可选消费",
+      "sub_industry": "Restaurants",
+      "name": "Starbucks Corp.",
+      "exchange": "NASDAQ"
+    },
+    {
+      "ticker": "WMT",
+      "market_cap": 760000000000,
+      "sector": "Consumer Staples",
+      "sector_zh": "必需消费",
+      "sub_industry": "Hypermarkets & Big-Bazaar Retail",
+      "name": "Walmart Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "KO",
+      "market_cap": 290000000000,
+      "sector": "Consumer Staples",
+      "sector_zh": "必需消费",
+      "sub_industry": "Soft Drinks & Non-alcoholic Beverages",
+      "name": "Coca-Cola Co.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "JPM",
+      "market_cap": 670000000000,
+      "sector": "Financials",
+      "sector_zh": "金融",
+      "sub_industry": "Diversified Banks",
+      "name": "JPMorgan Chase & Co.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "V",
+      "market_cap": 580000000000,
+      "sector": "Financials",
+      "sector_zh": "金融",
+      "sub_industry": "Transaction & Payment Processing Services",
+      "name": "Visa Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "MA",
+      "market_cap": 470000000000,
+      "sector": "Financials",
+      "sector_zh": "金融",
+      "sub_industry": "Transaction & Payment Processing Services",
+      "name": "Mastercard Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "BAC",
+      "market_cap": 350000000000,
+      "sector": "Financials",
+      "sector_zh": "金融",
+      "sub_industry": "Diversified Banks",
+      "name": "Bank of America",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "LLY",
+      "market_cap": 800000000000,
+      "sector": "Health Care",
+      "sector_zh": "医疗保健",
+      "sub_industry": "Pharmaceuticals",
+      "name": "Eli Lilly & Co.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "UNH",
+      "market_cap": 480000000000,
+      "sector": "Health Care",
+      "sector_zh": "医疗保健",
+      "sub_industry": "Managed Health Care",
+      "name": "UnitedHealth Group",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "JNJ",
+      "market_cap": 380000000000,
+      "sector": "Health Care",
+      "sector_zh": "医疗保健",
+      "sub_industry": "Pharmaceuticals",
+      "name": "Johnson & Johnson",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "CAT",
+      "market_cap": 175000000000,
+      "sector": "Industrials",
+      "sector_zh": "工业",
+      "sub_industry": "Construction Machinery & Heavy Transportation Equipment",
+      "name": "Caterpillar Inc.",
+      "exchange": "NYSE"
+    },
+    {
+      "ticker": "XOM",
+      "market_cap": 510000000000,
+      "sector": "Energy",
+      "sector_zh": "能源",
+      "sub_industry": "Integrated Oil & Gas",
+      "name": "Exxon Mobil Corp.",
+      "exchange": "NYSE"
+    }
+  ],
+  "news": [
+    {
+      "ticker": "AAPL",
+      "title": "Apple beats Q3 estimates as iPhone sales surge, services hit record",
+      "summary": "Cupertino-based Apple reported quarterly revenue of $94.8B, beating analyst estimates of $92.3B. iPhone sales grew 6.4% YoY, while services segment reached all-time high of $24.2B.",
+      "url": "https://www.reuters.com/business/apple-q3-earnings-2026",
+      "publisher": "Reuters",
+      "published_at": 1789891282,
+      "published_iso": "2026-09-20T08:01:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AAPL",
+      "title": "Apple announces $110B share buyback program, dividend hike",
+      "summary": "Apple's board authorized an additional $110B share repurchase program, the largest in corporate history. The company also raised its quarterly dividend by 4%.",
+      "url": "https://www.bloomberg.com/news/apple-buyback-2026",
+      "publisher": "Bloomberg",
+      "published_at": 1789890082,
+      "published_iso": "2026-09-20T07:41:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AAPL",
+      "title": "Apple Vision Pro 2 launch delayed amid production issues, sources say",
+      "summary": "Apple's next-generation mixed reality headset has been delayed by at least three months due to supply chain constraints on micro-OLED displays, according to people familiar with the matter.",
+      "url": "https://www.bloomberg.com/news/apple-vision-pro-delay",
+      "publisher": "Bloomberg",
+      "published_at": 1789881982,
+      "published_iso": "2026-09-20T05:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "NVDA",
+      "title": "NVIDIA's new Blackwell Ultra chips in tight supply, customers scramble",
+      "summary": "NVIDIA's latest AI accelerator chips are facing allocation shortages, with major cloud providers competing for limited inventory. Hyperscaler orders reportedly exceed supply by 3x.",
+      "url": "https://www.reuters.com/technology/nvidia-blackwell-shortage",
+      "publisher": "Reuters",
+      "published_at": 1789889182,
+      "published_iso": "2026-09-20T07:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "NVDA",
+      "title": "NVIDIA data center revenue beats estimates, raises full-year guidance",
+      "summary": "NVIDIA reported data center revenue of $32.6B, beating consensus of $30.1B. The company raised full-year revenue guidance, citing 'unprecedented' AI demand.",
+      "url": "https://www.cnbc.com/2026/09/nvidia-earnings-data-center",
+      "publisher": "CNBC",
+      "published_at": 1789887382,
+      "published_iso": "2026-09-20T06:56:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "NVDA",
+      "title": "U.S. weighs new export curbs on NVIDIA's China-specific AI chips",
+      "summary": "The Commerce Department is reportedly considering expanding restrictions on AI chip exports, targeting even the lower-spec China-specific variants of NVIDIA's products.",
+      "url": "https://www.wsj.com/tech/nvidia-china-export-curbs",
+      "publisher": "WSJ",
+      "published_at": 1789878382,
+      "published_iso": "2026-09-20T04:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "MSFT",
+      "title": "Microsoft Azure growth accelerates, AI services drive 35% revenue jump",
+      "summary": "Microsoft's cloud segment Azure posted 35% YoY growth, driven by surging demand for Azure OpenAI Service and AI-powered enterprise tools. Capital expenditure rose to $28B.",
+      "url": "https://www.reuters.com/technology/microsoft-azure-q1",
+      "publisher": "Reuters",
+      "published_at": 1789888282,
+      "published_iso": "2026-09-20T07:11:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "MSFT",
+      "title": "Microsoft wins $20B Pentagon cloud contract, expands government AI",
+      "summary": "The Department of Defense awarded Microsoft a multi-year cloud and AI services contract valued at up to $20B, cementing Azure's position in the federal market.",
+      "url": "https://www.bloomberg.com/news/microsoft-pentagon-cloud-contract",
+      "publisher": "Bloomberg",
+      "published_at": 1789873582,
+      "published_iso": "2026-09-20T03:06:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "GOOGL",
+      "title": "Google parent Alphabet to buy back $70B in stock, first-ever dividend declared",
+      "summary": "Alphabet announced its first-ever quarterly cash dividend of $0.20/share alongside a $70B share repurchase authorization. The move signals confidence in cash flow generation.",
+      "url": "https://www.cnbc.com/2026/05/alphabet-dividend-buyback",
+      "publisher": "CNBC",
+      "published_at": 1789886182,
+      "published_iso": "2026-09-20T06:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "GOOGL",
+      "title": "DOJ antitrust case: Google search monopoly trial begins next month",
+      "summary": "The Department of Justice's landmark antitrust case against Google's search business is scheduled to begin trial next month. The case could result in structural remedies.",
+      "url": "https://www.wsj.com/tech/google-doj-antitrust-trial",
+      "publisher": "WSJ",
+      "published_at": 1789867582,
+      "published_iso": "2026-09-20T01:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "META",
+      "title": "Meta's Reality Labs posts smaller-than-expected loss, stock surges",
+      "summary": "Meta's metaverse division reported a Q3 operating loss of $8.2B, narrower than analyst estimates of $9.5B. Shares rose 5% in extended trading on the news.",
+      "url": "https://www.reuters.com/technology/meta-reality-labs-q3",
+      "publisher": "Reuters",
+      "published_at": 1789884982,
+      "published_iso": "2026-09-20T06:16:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "META",
+      "title": "Meta unveils new AI-powered advertising tools, targets SMB market",
+      "summary": "Meta announced a suite of generative AI tools for small businesses to create ads automatically. The launch is part of CEO's strategy to dominate AI-driven advertising.",
+      "url": "https://www.bloomberg.com/news/meta-ai-ad-tools-smb",
+      "publisher": "Bloomberg",
+      "published_at": 1789875982,
+      "published_iso": "2026-09-20T03:46:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "TSLA",
+      "title": "Tesla cuts prices in China again amid weak demand, shares slide",
+      "summary": "Tesla reduced Model Y and Model 3 prices in China by 4-6%, the third cut this quarter. The move signals persistent demand weakness and increased competition from BYD.",
+      "url": "https://www.cnbc.com/2026/09/tesla-china-price-cut",
+      "publisher": "CNBC",
+      "published_at": 1789889782,
+      "published_iso": "2026-09-20T07:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "TSLA",
+      "title": "Tesla Cybertruck production halted for one week over quality issues",
+      "summary": "Tesla paused Cybertruck production at its Texas Gigafactory for one week to address panel gap and fitment issues, according to internal communications.",
+      "url": "https://www.bloomberg.com/news/tesla-cybertruck-production-halt",
+      "publisher": "Bloomberg",
+      "published_at": 1789880782,
+      "published_iso": "2026-09-20T05:06:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "TSLA",
+      "title": "Tesla's robotaxi launch postponed to Q2 2027, Musk confirms",
+      "summary": "Elon Musk confirmed that the company's robotaxi service launch will be delayed to the second quarter of 2027, citing regulatory hurdles and additional safety testing requirements.",
+      "url": "https://www.reuters.com/technology/tesla-robotaxi-delay",
+      "publisher": "Reuters",
+      "published_at": 1789871182,
+      "published_iso": "2026-09-20T02:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AMZN",
+      "title": "Amazon AWS growth re-accelerates, AI workloads drive margin expansion",
+      "summary": "AWS posted 19% YoY revenue growth in Q3, the strongest in seven quarters. Operating margin expanded to 36.5% as AI workloads increased efficiency.",
+      "url": "https://www.cnbc.com/2026/09/amazon-aws-q3-earnings",
+      "publisher": "CNBC",
+      "published_at": 1789887082,
+      "published_iso": "2026-09-20T06:51:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AMZN",
+      "title": "Amazon to invest $15B in data center expansion in Northern Virginia",
+      "summary": "Amazon Web Services announced a $15B investment to expand its data center footprint in Loudoun County, Virginia, creating 5,000 new jobs.",
+      "url": "https://www.reuters.com/technology/amazon-aws-virginia-expansion",
+      "publisher": "Reuters",
+      "published_at": 1789863982,
+      "published_iso": "2026-09-20T00:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "LLY",
+      "title": "Eli Lilly's GLP-1 drug Mounjaro shows strong heart benefits in late-stage trial",
+      "summary": "Eli Lilly's blockbuster weight-loss drug Mounjaro demonstrated significant cardiovascular benefits in a Phase 3 trial, potentially expanding the addressable market.",
+      "url": "https://www.bloomberg.com/news/lilly-mounjaro-heart-trial",
+      "publisher": "Bloomberg",
+      "published_at": 1789884082,
+      "published_iso": "2026-09-20T06:01:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "LLY",
+      "title": "Eli Lilly raises full-year guidance on GLP-1 demand, stock hits record",
+      "summary": "Eli Lilly raised its full-year revenue guidance for the second time this year, citing stronger-than-expected demand for its GLP-1 drugs Zepbound and Mounjaro.",
+      "url": "https://www.wsj.com/business/lilly-guidance-raise",
+      "publisher": "WSJ",
+      "published_at": 1789879582,
+      "published_iso": "2026-09-20T04:46:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "UNH",
+      "title": "UnitedHealth raises dividend, beats Q3 earnings estimates",
+      "summary": "UnitedHealth Group reported Q3 adjusted EPS of $7.15, beating consensus of $6.82. The company raised its quarterly dividend by 10%.",
+      "url": "https://www.reuters.com/business/unitedhealth-q3-earnings",
+      "publisher": "Reuters",
+      "published_at": 1789882282,
+      "published_iso": "2026-09-20T05:31:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "UNH",
+      "title": "UnitedHealth faces DOJ investigation into Medicare billing practices",
+      "summary": "The Department of Justice has opened a civil investigation into UnitedHealth's Medicare Advantage billing practices, according to people familiar with the matter.",
+      "url": "https://www.wsj.com/healthcare/unitedhealth-doj-investigation",
+      "publisher": "WSJ",
+      "published_at": 1789869382,
+      "published_iso": "2026-09-20T01:56:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "JNJ",
+      "title": "Johnson & Johnson settles talc lawsuits for $8B, lawsuit stock jumps",
+      "summary": "J&J agreed to pay $8B to settle thousands of lawsuits alleging its talc products caused cancer. The settlement removes a major overhang on the stock.",
+      "url": "https://www.reuters.com/business/jnj-talc-court-cases",
+      "publisher": "Reuters",
+      "published_at": 1789877782,
+      "published_iso": "2026-09-20T04:16:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "JPM",
+      "title": "JPMorgan beats Q3 estimates, lifts 2026 NII guidance to record",
+      "summary": "JPMorgan Chase reported Q3 EPS of $5.20, beating consensus of $4.85. CEO Jamie Dimon raised full-year net interest income guidance to a new record.",
+      "url": "https://www.bloomberg.com/news/jpmorgan-q3-nii-estimate-raise",
+      "publisher": "Bloomberg",
+      "published_at": 1789886482,
+      "published_iso": "2026-09-20T06:41:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "JPM",
+      "title": "JPMorgan's Dimon warns of 'storm clouds' over U.S. economy",
+      "summary": "JPMorgan CEO Jamie Dimon cautioned about geopolitical risks and inflation, saying the U.S. economy faces 'more storm clouds' than at any time in the past decade.",
+      "url": "https://www.cnbc.com/2026/09/dimon-storm-clouds-economy",
+      "publisher": "CNBC",
+      "published_at": 1789874182,
+      "published_iso": "2026-09-20T03:16:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "V",
+      "title": "Visa reports strong Q4 results, cross-border volume surges 18%",
+      "summary": "Visa reported Q4 net revenue of $9.2B, with cross-border payment volumes jumping 18% YoY. The company authorized a new $10B share repurchase program.",
+      "url": "https://www.reuters.com/business/visa-q4-results",
+      "publisher": "Reuters",
+      "published_at": 1789882882,
+      "published_iso": "2026-09-20T05:41:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "BAC",
+      "title": "Bank of America beats Q3 estimates on strong NII, provisions fall",
+      "summary": "Bank of America reported Q3 EPS of $0.94, beating consensus of $0.85. Net interest income rose 4% YoY, while credit provisions declined from year-ago levels.",
+      "url": "https://www.wsj.com/finance/bank-of-america-q3-earnings",
+      "publisher": "WSJ",
+      "published_at": 1789881082,
+      "published_iso": "2026-09-20T05:11:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "WMT",
+      "title": "Walmart reports strong Q3, raises full-year guidance on grocery share gains",
+      "summary": "Walmart reported Q3 comp sales growth of 5.8%, the strongest in five years. The retailer raised full-year EPS guidance as it gains share in grocery.",
+      "url": "https://www.reuters.com/business/walmart-q3-earnings",
+      "publisher": "Reuters",
+      "published_at": 1789879582,
+      "published_iso": "2026-09-20T04:46:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "WMT",
+      "title": "Walmart invests $3B in automation, expands use of AI in fulfillment centers",
+      "summary": "Walmart announced a $3B investment to expand automation across its U.S. fulfillment network, including AI-powered inventory management systems.",
+      "url": "https://www.bloomberg.com/news/walmart-automation-investment",
+      "publisher": "Bloomberg",
+      "published_at": 1789860382,
+      "published_iso": "2026-09-19T23:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "MCD",
+      "title": "McDonald's same-store sales beat estimates, traffic rebounds in U.S.",
+      "summary": "McDonald's reported Q3 global same-store sales of 4.2%, beating consensus of 3.5%. U.S. traffic returned to positive territory for the first time in six quarters.",
+      "url": "https://www.cnbc.com/2026/09/mcdonalds-q3-earnings",
+      "publisher": "CNBC",
+      "published_at": 1789875682,
+      "published_iso": "2026-09-20T03:41:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "SBUX",
+      "title": "Starbucks same-store sales miss, China demand remains weak",
+      "summary": "Starbucks reported Q4 same-store sales of 2.1%, missing consensus of 3.5%. China comparable sales declined 8% as competition with local chains intensifies.",
+      "url": "https://www.wsj.com/business/starbucks-q4-results",
+      "publisher": "WSJ",
+      "published_at": 1789871782,
+      "published_iso": "2026-09-20T02:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "XOM",
+      "title": "ExxonMobil beats Q3 earnings on strong refining margins, production up",
+      "summary": "ExxonMobil reported Q3 EPS of $2.06, beating consensus of $1.92. Refining margins surged on global supply tightness, while production rose 6% YoY.",
+      "url": "https://www.reuters.com/business/exxon-q3-earnings",
+      "publisher": "Reuters",
+      "published_at": 1789874482,
+      "published_iso": "2026-09-20T03:21:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "XOM",
+      "title": "ExxonMobil's $60B Pioneer acquisition receives final regulatory approval",
+      "summary": "ExxonMobil's $60B acquisition of Pioneer Natural Resources received final approval from U.S. regulators. The deal is expected to close by year-end.",
+      "url": "https://www.bloomberg.com/news/exxon-pioneer-approval",
+      "publisher": "Bloomberg",
+      "published_at": 1789857382,
+      "published_iso": "2026-09-19T22:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "CAT",
+      "title": "Caterpillar cuts full-year guidance on weak demand, China sales plunge",
+      "summary": "Caterpillar reduced its full-year revenue guidance, citing weaker-than-expected construction equipment demand. Sales in China declined 22% YoY.",
+      "url": "https://www.wsj.com/business/caterpillar-guidance-cut",
+      "publisher": "WSJ",
+      "published_at": 1789868182,
+      "published_iso": "2026-09-20T01:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "CAT",
+      "title": "Caterpillar announces $4B share buyback despite earnings miss",
+      "summary": "Caterpillar announced a new $4B share repurchase program despite missing Q3 earnings estimates, signaling confidence in long-term cash generation.",
+      "url": "https://www.cnbc.com/2026/09/caterpillar-buyback",
+      "publisher": "CNBC",
+      "published_at": 1789863982,
+      "published_iso": "2026-09-20T00:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AMD",
+      "title": "AMD's MI350 AI chip wins major hyperscaler order, stock rallies",
+      "summary": "AMD announced a multi-billion-dollar AI chip order from a top-tier cloud provider for its MI350 accelerators. Shares surged 12% in pre-market.",
+      "url": "https://www.reuters.com/technology/amd-mi350-hyperscaler",
+      "publisher": "Reuters",
+      "published_at": 1789887982,
+      "published_iso": "2026-09-20T07:06:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "AVGO",
+      "title": "Broadcom cuts full-year revenue forecast on AI demand weakness",
+      "summary": "Broadcom lowered its full-year AI revenue forecast, citing 'softer than expected' demand from one of its hyperscaler customers. Shares fell 6%.",
+      "url": "https://www.cnbc.com/2026/09/broadcom-ai-forecast-cut",
+      "publisher": "CNBC",
+      "published_at": 1789882282,
+      "published_iso": "2026-09-20T05:31:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "ORCL",
+      "title": "Oracle's cloud revenue beats estimates, raises subscription outlook",
+      "summary": "Oracle reported Q2 cloud infrastructure revenue of $2.4B, beating consensus. The company raised its full-year OCI subscription outlook.",
+      "url": "https://www.bloomberg.com/news/oracle-cloud-q2",
+      "publisher": "Bloomberg",
+      "published_at": 1789878982,
+      "published_iso": "2026-09-20T04:36:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "CRM",
+      "title": "Salesforce reports strong Q3, AI agents drive new bookings",
+      "summary": "Salesforce reported Q3 revenue of $9.3B, beating estimates. The company's AI agent platform, Agentforce, drove over $1B in new bookings.",
+      "url": "https://www.reuters.com/technology/salesforce-q3-earnings",
+      "publisher": "Reuters",
+      "published_at": 1789869982,
+      "published_iso": "2026-09-20T02:06:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "NFLX",
+      "title": "Netflix subscriber additions beat, ad-tier drives growth",
+      "summary": "Netflix added 14.2M subscribers in Q3, beating consensus of 11.5M. The ad-supported tier now accounts for 35% of new sign-ups in the U.S.",
+      "url": "https://www.bloomberg.com/news/netflix-q3-subscribers",
+      "publisher": "Bloomberg",
+      "published_at": 1789876582,
+      "published_iso": "2026-09-20T03:56:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "T",
+      "title": "AT&T beats Q3 estimates on wireless postpaid growth, fiber expansion",
+      "summary": "AT&T reported Q3 EPS of $0.60, beating consensus. The company added 415K postpaid phone subscribers and expanded fiber to 1.2M new locations.",
+      "url": "https://www.wsj.com/telecom/at-t-q3-earnings",
+      "publisher": "WSJ",
+      "published_at": 1789871182,
+      "published_iso": "2026-09-20T02:26:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "HD",
+      "title": "Home Depot beats Q3 estimates, raises full-year outlook",
+      "summary": "Home Depot reported Q3 comp sales of 2.8%, beating estimates. The retailer raised its full-year EPS guidance as the housing market stabilizes.",
+      "url": "https://www.reuters.com/business/home-depot-q3-earnings",
+      "publisher": "Reuters",
+      "published_at": 1789873582,
+      "published_iso": "2026-09-20T03:06:22.415730+00:00",
+      "source": "mock"
+    },
+    {
+      "ticker": "KO",
+      "title": "Coca-Cola reports solid Q3, raises full-year organic revenue outlook",
+      "summary": "Coca-Cola reported Q3 organic revenue growth of 5.1%, with pricing actions offsetting volume softness in Latin America. The company raised full-year guidance.",
+      "url": "https://www.cnbc.com/2026/09/coca-cola-q3-earnings",
+      "publisher": "CNBC",
+      "published_at": 1789875382,
+      "published_iso": "2026-09-20T03:36:22.415730+00:00",
+      "source": "mock"
+    }
+  ]
+}
