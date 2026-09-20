@@ -20,11 +20,42 @@ import requests
 import akshare as ak
 import datetime
 import re
+import sys
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+# 公共指标函数（与 simple_picker.py 共用）
+try:
+    from indicators import calc_macd as calc_macd, get_market as get_market
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from indicators import calc_macd as calc_macd, get_market as get_market
+
 TODAY = datetime.date.today().strftime("%Y%m%d")
+# YESTERDAY 不能简单减 1 天：周一减 1 会变成周日（非交易日，涨停池/板块热度为空）。
+# 保留旧值供本地/回测兼容，但调用 ak.stock_zt_pool_em 时必须传入交易日（下方 main 里处理）。
 YESTERDAY = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
+
+
+def get_last_trade_date() -> str:
+    """获取最近一个 A 股交易日（YYYYMMDD）。
+
+    优先用新浪交易日历；若 akshare 不可用则回退到自然日减 1（保留旧行为，
+    但调用方应在写入风险统计/涨停池时显式调用本函数）。
+    """
+    try:
+        cal = ak.tool_trade_date_hist_sina()
+        # 兼容 Series / DataFrame
+        if hasattr(cal, "columns"):
+            col = cal.columns[0]
+            dates = sorted([d.strftime("%Y%m%d") for d in cal[col] if d <= datetime.date.today()])
+        else:
+            dates = sorted([d.strftime("%Y%m%d") for d in cal if d <= datetime.date.today()])
+        if dates:
+            return dates[-1]
+    except Exception:
+        pass
+    return YESTERDAY
 
 # ============================================================
 # 工具函数：投研评分查询
@@ -149,76 +180,12 @@ def get_recent_change(code, market='sh'):
         chg_3d = (closes[-2] / closes[-5] - 1) * 100 if len(closes) >= 5 else 0  # 3日涨幅（到昨日）
         chg_5d = (closes[-2] / closes[-7] - 1) * 100 if len(closes) >= 7 else 0  # 5日涨幅（到昨日）
         return 0, chg_1d, chg_2d, chg_3d, chg_5d  # chg_today=0（当日价格未知）
-    except:
+    except Exception:
         return 0, 0, 0, 0, 0
 
 
-def get_market(code):
-    code = str(code).zfill(6)
-    if code[0] in ('0', '3'):
-        return 'sz'
-    return 'sh'
-
-
-# ========== MACD计算（0轴上方金叉检测）==========
-def calc_macd(closes):
-    """
-    计算MACD指标
-    返回: (dif, dea, macd_hist, golden_cross, golden_cross_days)
-    - golden_cross: True=当前金叉（DIF上穿DEA且两者>0）
-    - golden_cross_days: 最近N日内出现金叉
-    """
-    if len(closes) < 34:
-        return None, None, None, False, 999
-    
-    # 计算EMA12和EMA26
-    ema12 = closes[0]
-    ema26 = closes[0]
-    alpha12 = 2 / 13
-    alpha26 = 2 / 27
-    
-    dif_list = []
-    for i, c in enumerate(closes):
-        ema12 = ema12 * (1 - alpha12) + c * alpha12 if i > 0 else c
-        ema26 = ema26 * (1 - alpha26) + c * alpha26 if i > 0 else c
-        dif_list.append(ema12 - ema26)
-    
-    # 计算DEA（9日EMA of DIF）
-    dea_list = []
-    alpha9 = 2 / 10
-    for i, d in enumerate(dif_list):
-        if i < 26:
-            dea_list.append(d)  # 前26天DIF=DEA
-        else:
-            prev_dea = dea_list[-1] if dea_list else d
-            dea_list.append(prev_dea * (1 - alpha9) + d * alpha9)
-    
-    # MACD柱 = (DIF - DEA) * 2
-    hist_list = [(dif_list[i] - dea_list[i]) * 2 for i in range(len(dif_list))]
-    
-    # 取最近60日（足够检测金叉）
-    dif60 = dif_list[-60:]
-    dea60 = dea_list[-60:]
-    hist60 = hist_list[-60:]
-    
-    # 检测金叉：昨日DIF<DEA 且 今日DIF>DEA
-    golden_cross = False
-    golden_cross_days = 999
-    
-    for i in range(len(dif60) - 1, max(0, len(dif60) - 5), -1):  # 检查最近4天
-        # 今日DIF>DEA 且 两者都在0轴上方
-        if dif60[i] > dea60[i] and dif60[i] > 0 and dea60[i] > 0:
-            # 昨日DIF<=DEA（死叉或刚金叉）
-            if dif60[i-1] <= dea60[i-1]:
-                golden_cross = True
-                golden_cross_days = len(dif60) - 1 - i
-                break
-    
-    cur_dif = dif_list[-1]
-    cur_dea = dea_list[-1]
-    cur_hist = hist_list[-1]
-    
-    return cur_dif, cur_dea, cur_hist, golden_cross, golden_cross_days
+# get_market / calc_macd 已迁到 indicators.py（上方 from import 注入）
+# 这里不再重复定义，避免双份实现语义漂移。
 
 
 # ========== 当日量比获取 ==========
@@ -500,11 +467,13 @@ def pre_filter_all(code, name='', market='sh', board_stats=None, is_zt_stock=Fal
         fails.append(f'C-业绩: 近20日{new_low_count}日创新低（基本面趋弱）')
 
     # ===== 新增：追高过滤（欧奈尔核心改进）=====
-    chg_today, chg_yesterday, chg_2d, chg_3d, chg_5d = get_recent_change(code, market)
-    # 昨日涨幅>10% → 追高风险，等回调确认（但可以用今日回调幅度降低风险）
-    if chg_yesterday > 10 and chg_today < -0.5:
-        fails.append(f'追高-昨日: 昨日涨幅+{chg_yesterday:.1f}%且今日走弱（⚠️追高风险）')
-    elif chg_yesterday > 12:
+    _chg_unused, chg_yesterday, chg_2d, chg_3d, chg_5d = get_recent_change(code, market)
+    # 注：get_recent_change 的第一个返回值（按原代码注释本意为"今日涨幅"）
+    # 实际永远为 0（数据源不返回当日盘中价）。原代码 `if chg_yesterday > 10 and chg_today < -0.5`
+    # 因此是死代码，"昨日大涨且今日走弱"这条保护从未生效。
+    # 修复策略：删除那个永远假的分支；如未来需要"今日回调"逻辑，应让
+    # get_recent_change 通过腾讯财经/akshare 单独取一次盘中价再传入。
+    if chg_yesterday > 12:
         fails.append(f'追高-昨日: 昨日涨幅+{chg_yesterday:.1f}%（⚠️追高风险，等回调）')
     # 连续2日涨幅>25% → 主力可能正在出货
     if chg_2d > 25:
@@ -1072,8 +1041,6 @@ def run_picker():
                     scored.append(r)
             except:
                 pass
-
-    scored.sort(key=lambda x: x['total'], reverse=True)
 
     scored.sort(key=lambda x: x['total'], reverse=True)
 

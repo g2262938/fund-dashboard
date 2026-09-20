@@ -15,3 +15,18 @@ vision.jpg
 # IDE
 .vscode/
 .idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# 构建产物（由 gen_report.py / 数据更新脚本生成）
+index.html          # 由 index.template.html + data/*.json 渲染，本地无需手工提交
+yjyg_gain.html      # 同上，内联了 1MB 数据，仓库只留 data/yjyg_gain_latest.json
+yjyg_loss.html      # 同上
+
+# 测试
+.fund_test_*/

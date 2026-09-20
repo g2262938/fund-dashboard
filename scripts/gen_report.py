@@ -195,11 +195,52 @@ def get_latest_review() -> dict | None:
     return None
 
 
+# 默认持仓（从代码内抽到持仓文件 / 从环境变量注入，避免硬编码到公开仓库）
+DEFAULT_HOLDINGS_HINT = (
+    "- 持仓列表请通过 --holdings 传入 JSON 文件，或从 data/holdings.json 读取；\n"
+    "  当前仓库不再硬编码个人持仓，避免隐私泄露。"
+)
+
+
+def _load_holdings_prompt() -> str:
+    """从 data/holdings.json（若存在）读取持仓列表用于 prompt。
+    文件不存在或格式错误时使用空字符串（调用方决定是否注入默认提示）。"""
+    import json
+    import os
+    candidates = [
+        os.environ.get("FUND_HOLDINGS_FILE", ""),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "holdings.json"),
+    ]
+    for p in candidates:
+        if p and os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    arr = json.load(f)
+                if isinstance(arr, list):
+                    lines = []
+                    for h in arr:
+                        code = h.get("code", "?")
+                        name = h.get("name", "?")
+                        sector = h.get("sector", h.get("industry", ""))
+                        lines.append(f"- {name}({code})：{sector}")
+                    if lines:
+                        return "\n".join(lines)
+            except Exception:
+                pass
+    return ""
+
+
 def _interpret_news_item(title: str, source: str) -> str:
-    """用 LLM 生成一句话解读"""
+    """用 LLM 生成一句话解读。
+    注意：API Key 必须通过环境变量 MINIMAX_API_KEY 提供，不要写进代码。"""
+    import os
+    api_key = os.environ.get("MINIMAX_API_KEY", "").strip()
+    if not api_key:
+        # 静默跳过，不向 stderr 输出（避免污染生成结果）
+        return ""
     try:
-        import os, requests as _req
-        api_key = "sk-cp--yVkki1ch0BSlmUPncCDmtz_romRFxz7iGPdp8AIDFBwOl3wLWGBieOjHB-92yc2gc-z9KpdaEMze2xpxNJVnpNbnrYCOGUEsipCjTjlGG6aWiSUlgUrM0o"
+        import requests as _req
+        holdings_block = _load_holdings_prompt() or DEFAULT_HOLDINGS_HINT
         resp = _req.post(
             "https://api.minimaxi.com/anthropic/v1/messages",
             headers={
@@ -216,9 +257,7 @@ def _interpret_news_item(title: str, source: str) -> str:
                     "content": f"""你是一位A股短线交易员。基于新闻直接给出交易建议。
 
 持仓参考（仅在新闻与持仓有直接或合理关联时才提及，否则不提及）：
-- 信科移动(688387)：科创板，半导体/AI算力芯片
-- 滨化股份(601678)：上交所，化工/盐化工 山东
-- 越疆(02432.HK)：港股，协作机器人
+{holdings_block}
 
 注意：
 - 新闻必须与持仓板块有直接或合理关联才能推荐操作持仓，否则只推荐相关板块ETF/龙头股

@@ -388,6 +388,9 @@ def simulate_compound_snowball(
                 size = min(size, cash * 0.5)  # 单只不超过现金 50%
 
                 entry_price = pick["entry_price"]
+                # 【零除守卫】entry_price 来自外部 pick，若为 0 会抛 ZeroDivisionError
+                if not entry_price or entry_price <= 0:
+                    continue
                 shares = int(size / entry_price / 100) * 100  # 100 股一手
                 if shares < 100:
                     continue

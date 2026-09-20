@@ -63,15 +63,12 @@ def push_wechat(text: str) -> bool:
         log("⚠️ 未配置微信 Webhook，无法推送")
         return False
 
-    # 企业微信 webhook
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
+    # 企业微信 webhook（使用系统默认 SSL 上下文，开启证书校验）
     payload = json.dumps({"msgtype":"text","text":{"content":text}}).encode("utf-8")
     url = f"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={webhook}"
     try:
         req = urllib.request.Request(url, data=payload, headers={"Content-Type":"application/json"})
-        with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             result = json.loads(resp.read().decode())
             if result.get("errcode") == 0:
                 log("✅ 微信推送成功")

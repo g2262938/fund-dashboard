@@ -1,0 +1,29 @@
+#!/bin/bash
+# 【已废弃，请改用 us_market_hours.py】
+#
+# 原脚本存在的两个 bug：
+# 1. 北京时间周六 00:00-04:00（对应美东周五 12:00-16:00）被 WEEKDAY=6 排除，
+#    导致每周五美股下半场 4 小时无人监控。
+# 2. 写死 21:30-04:00 等价于假定美东永远是 EDT（夏令时），
+#    冬令时（EST，UTC-5）下美股对应北京 22:30-05:00，会漏最后一小时。
+#
+# 修复版本用 Python 的 zoneinfo 自动处理夏令时切换，详见同目录 us_market_hours.py。
+# 保留本文件仅为留档参考，不再被任何脚本调用。
+
+NOW=$(date +%w\ %H\ %M)
+WEEKDAY=$(echo $NOW | awk '{print $1}')
+HOUR=$(echo $NOW | awk '{print $2}')
+MIN=$(echo $NOW | awk '{print $3}')
+
+TOTAL=$((10#$HOUR * 60 + 10#$MIN))
+
+if [[ "$WEEKDAY" =~ ^[1-5]$ ]]; then
+    if [[ $TOTAL -ge 1290 ]] && [[ $TOTAL -le 1439 ]]; then
+        exit 0
+    fi
+    if [[ $TOTAL -le 240 ]]; then
+        exit 0
+    fi
+fi
+
+exit 1

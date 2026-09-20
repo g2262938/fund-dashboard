@@ -7,8 +7,20 @@
 # 首次运行（state 文件不存在）：初始化状态，不推送
 # 后续运行：检测到新财报立即推送微信
 
-STATE_FILE="/home/ubuntu/.openclaw/workspace/scripts/seen_earn_state.json"
-PYTHON="/home/ubuntu/.hermes/hermes-agent/venv/bin/python"
+set -uo pipefail
+
+STATE_FILE="${FUND_STATE_FILE:-/home/ubuntu/.openclaw/workspace/scripts/seen_earn_state.json}"
+PYTHON="${FUND_PYTHON_BIN:-/home/ubuntu/.hermes/hermes-agent/venv/bin/python}"
+LOGDIR="${FUND_LOG_DIR:-/tmp}"
+
+# flock 互斥
+LOCKFILE="$LOGDIR/us_earnings_watchdog.lock"
+mkdir -p "$(dirname "$STATE_FILE")" "$LOGDIR"
+exec 9>"$LOCKFILE"
+if ! flock -n 9; then
+    echo "[$(date)] ⏳ 上一次美股财报监控仍在运行，跳过本次" >> "$LOGDIR/us_earnings.log"
+    exit 0
+fi
 
 if [ ! -f "$STATE_FILE" ]; then
     # 首次运行：初始化状态
