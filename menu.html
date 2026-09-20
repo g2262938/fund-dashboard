@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票仪表板 · 菜单</title>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.25.0/dist/index.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --ef-blue: #005096;
+    --ef-blue-dark: #003d75;
+    --ef-blue-light: #1a6cb8;
+    --ef-blue-pale: #e6f3fb;
+    --bg-base: #ffffff;
+    --bg-soft: #f4f7f8;
+    --bg-side: #0a1929;
+    --bg-side-2: #112a45;
+    --bg-hover: #1d4068;
+    --border: #e1e8ed;
+    --text-primary: #1a2332;
+    --text-secondary: #5a6b7d;
+    --text-dim: #8b95a3;
+    --text-light: #e6edf3;
+    --text-light-dim: #94a3b8;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 240px;
+    background: var(--bg-side);
+    background-image: linear-gradient(180deg, var(--bg-side) 0%, #0d2540 100%);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.brand {
+    padding: 20px 20px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.brand-logo {
+    width: 36px; height: 36px;
+    background: var(--ef-blue);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+}
+.brand-text .name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+.brand-text .name span { color: #ffd966; }
+.brand-text .tag {
+    font-size: 9px;
+    color: var(--text-light-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.nav {
+    flex: 1;
+    padding: 16px 0;
+    overflow-y: auto;
+}
+.nav-section {
+    padding: 8px 20px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-light-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+.nav-section:first-child { margin-top: 0; }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--text-light-dim);
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-left: 3px solid transparent;
+    user-select: none;
+}
+.nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-light);
+}
+.nav-item.active {
+    background: var(--bg-side-2);
+    color: #fff;
+    border-left-color: var(--ef-blue);
+    font-weight: 600;
+}
+.nav-item .icon {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+}
+.nav-item .badge {
+    margin-left: auto;
+    background: var(--ef-blue);
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 10px;
+    color: var(--text-light-dim);
+    line-height: 1.6;
+}
+
+/* ===== 全局搜索 ===== */
+.global-search {
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+}
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 0 10px;
+    transition: all 0.15s;
+}
+.search-box:focus-within {
+    background: rgba(255,255,255,0.12);
+    border-color: #ffd966;
+    box-shadow: 0 0 0 2px rgba(255, 217, 102, 0.15);
+}
+.search-icon {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-right: 6px;
+}
+.global-search input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 0;
+    outline: none;
+}
+.global-search input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+.search-results {
+    margin-top: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    background: #112a45;
+    border: 1px solid #1d4068;
+    border-radius: 6px;
+}
+.search-results.show { display: block; }
+.search-result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.1s;
+    font-size: 12px;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover {
+    background: var(--ef-blue-light);
+}
+.result-name {
+    color: #fff;
+    font-weight: 600;
+}
+.result-code {
+    color: #ffd966;
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    margin-left: 6px;
+}
+.result-meta {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    margin-top: 2px;
+}
+.search-empty {
+    padding: 16px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    font-size: 12px;
+}
+.live-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #4ade80;
+    animation: pulse 1.8s infinite;
+    margin-right: 6px;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ===== Main Content ===== */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-base);
+}
+
+.topbar {
+    height: 50px;
+    background: var(--bg-base);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+}
+.topbar-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.topbar-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: "SF Mono", monospace;
+}
+
+.content {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+    position: relative;
+}
+.content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--ef-blue);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .layout { flex-direction: column; }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    .brand { border: none; padding: 12px 16px; }
+    .nav { display: flex; padding: 0; }
+    .nav-section { display: none; }
+    .nav-item { padding: 8px 14px; border-left: none; border-bottom: 3px solid transparent; }
+    .nav-item.active { border-left: none; border-bottom-color: var(--ef-blue); }
+    .sidebar-footer { display: none; }
+    .mobile-menu-btn { display: block; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">EF</div>
+            <div class="brand-text">
+                <div class="name">智投<span>·</span>控制台</div>
+                <div class="tag">SMART TRADING</div>
+            </div>
+        </div>
+
+        <!-- 全局搜索框 -->
+        <div class="global-search">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="global-search" placeholder="搜股票(代码/名称)..." autocomplete="off">
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+
+        <nav class="nav">
+            <a class="nav-item active" data-url="index.html">
+                <span class="icon">📊</span>
+                <span>仪表板</span>
+                <span class="badge">LIVE</span>
+            </a>
+            <a class="nav-item" data-url="news.html">
+                <span class="icon">📰</span>
+                <span>资讯监控</span>
+            </a>
+            <a class="nav-item" data-url="social_holding.html">
+                <span class="icon">🏛️</span>
+                <span>社保持仓</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="ah_dual_list.html">
+                <span class="icon">🌏</span>
+                <span>A+H双边行情</span>
+            </a>
+            <a class="nav-item" data-url="yjyg_loss.html">
+                <span class="icon">📉</span>
+                <span>中报预亏监控</span>
+            </a>
+            <a class="nav-item" data-url="yjyg_gain.html">
+                <span class="icon">📈</span>
+                <span>中报预增监控</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="history.html">
+                <span class="icon">📅</span>
+                <span>日期查看</span>
+            </a>
+            <a class="nav-item" data-url="picker_strategy.html">
+                <span class="icon">📐</span>
+                <span>策略流程图</span>
+            </a>
+            <a class="nav-item" data-url="backtest.html">
+                <span class="icon">📊</span>
+                <span>回测报告</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="receivable/advance-list.html">
+                <span class="icon">💰</span>
+                <span>应收管理</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="invoice/invoice-list.html">
+                <span class="icon">📑</span>
+                <span>发票系统</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="approval/index.html">
+                <span class="icon">📋</span>
+                <span>申请审批</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="concert-tickets.html">
+                <span class="icon">🎤</span>
+                <span>演唱会抢票</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a class="nav-item" data-url="invoice/04-purchase-list.html">
+                <span class="icon">📥</span>
+                <span>进项发票</span>
+            </a>
+            <a class="nav-item" data-url="backtest_report.json">
+                <span class="icon">📈</span>
+                <span>回测数据 JSON</span>
+            </a>
+
+            <a class="nav-item" data-url="选股策略v1-simple_picker.drawio">
+                <span class="icon">✏️</span>
+                <span>draw.io 源文件</span>
+            </a>
+            <a class="nav-item" data-url="picker_strategy.json">
+                <span class="icon">📋</span>
+                <span>策略 JSON 配置</span>
+            </a>
+            <a class="nav-item" data-url="data/latest.json">
+                <span class="icon">📦</span>
+                <span>数据 JSON</span>
+            </a>
+            <a class="nav-item" data-url="data/social_holding_latest.json">
+                <span class="icon">🏛️</span>
+                <span>社保数据 JSON</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div><span class="live-dot"></span>实时数据 · 每 15 分钟刷新</div>
+            <div style="margin-top: 6px;">© 小龙虾接盘系统 · 2026</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title" id="page-title">📊 仪表板</div>
+            <div class="topbar-meta" id="page-meta"></div>
+        </div>
+        <div class="content">
+            <iframe id="content-frame" src="index.html"></iframe>
+        </div>
+    </main>
+</div>
+
+<script>
+const navItems = document.querySelectorAll('.nav-item');
+const frame = document.getElementById('content-frame');
+const titleEl = document.getElementById('page-title');
+const metaEl = document.getElementById('page-meta');
+
+const titles = {
+    'index.html': '📊 仪表板',
+    'news.html': '📰 资讯监控',
+    'social_holding.html': '🏛️ 社保持仓',
+    'ah_dual_list.html': '🌏 A+H双边行情',
+    'yjyg_loss.html': '📉 中报预亏监控',
+    'yjyg_gain.html': '📈 中报预增监控',
+    'history.html': '📅 日期查看',
+    'picker_strategy.html': '📐 选股策略流程图',
+    'backtest.html': '📊 策略回测报告',
+    'receivable/advance-list.html': '💰 应收管理',
+    'invoice/invoice-list.html?tab=all': '📑 发票管理 · 销项',
+    'invoice/invoice-list.html?tab=red': '📑 发票管理 · 红冲',
+    'invoice/invoice-list.html?tab=voided': '📑 发票管理 · 撤销申请',
+    'invoice/04-purchase-list.html': '📥 进项发票管理',
+    'backtest_report.json': '📈 回测数据 JSON',
+    'position_manager.py': '🛡️ 止盈止损规则',
+    '选股策略v1-simple_picker.drawio': '✏️ draw.io 源文件',
+    'picker_strategy.json': '📋 策略 JSON 配置',
+    'simple_picker.py': '🐍 simple_picker.py',
+    'gen_report.py': '🐍 gen_report.py',
+    'data/latest.json': '📦 数据 JSON',
+    'data/social_holding_latest.json': '🏛️ 社保数据 JSON'
+};
+
+// 文本文件(代码/JSON)用 <pre> 包装显示
+function makeTextViewer(url, type) {
+    return `data:text/html;charset=utf-8,${encodeURIComponent(`
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${titles[url] || url}</title>
+<style>
+body { margin: 0; background: #0d1117; color: #e6edf3;
+       font-family: 'SF Mono', monospace; font-size: 12px; line-height: 1.55;
+       padding: 16px 24px; white-space: pre-wrap; word-wrap: break-word; }
+.header { background: #161b22; border-bottom: 1px solid #30363d; padding: 10px 24px;
+          font-family: -apple-system, sans-serif; font-size: 12px; color: #8b949e;
+          margin: -16px -24px 16px; position: sticky; top: 0; }
+.kw { color: #ff7b72; } .str { color: #a5d6ff; } .num { color: #79c0ff; }
+.com { color: #8b949e; font-style: italic; } .fn { color: #d2a8ff; }
+</style></head><body>
+<div class="header">${titles[url] || url} · ${type}</div>
+<div id="content">加载中...</div>
+<script>
+fetch('${url}').then(r => r.text()).then(t => {
+  document.getElementById('content').textContent = t;
+});
+<\/script>
+</body></html>
+`)}`;
+}
+
+navItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        const url = item.dataset.url;
+        const target = item.getAttribute('target');
+
+        // 在 iframe 内切换(不再跳新窗口)
+        navItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
+        let frameSrc = url;
+
+        // drawio 文件 → 用 draw.io 在线编辑器打开
+        if (url.endsWith('.drawio')) {
+            frameSrc = `https://app.diagrams.net/?url=${encodeURIComponent(location.origin + '/' + url)}#R${location.origin}/${url}`;
+        }
+        // 文本文件 → 用包装页查看
+        else if (url.endsWith('.py') || url.endsWith('.json')) {
+            frameSrc = makeTextViewer(url, url.endsWith('.py') ? 'Python 源码' : 'JSON 数据');
+        }
+
+        // 处理 anchor
+        if (url.includes('#')) {
+            const [base, anchor] = url.split('#');
+            frame.src = base;
+            setTimeout(() => {
+                const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+                const target = iframeDoc.getElementById(anchor);
+                if (target) target.scrollIntoView({behavior: 'smooth'});
+            }, 500);
+        } else {
+            frame.src = frameSrc;
+        }
+
+        titleEl.textContent = titles[url] || url;
+        e.preventDefault();
+    });
+});
+
+// ===== 全局股票搜索 =====
+let searchData = [];
+let searchDataLoaded = false;
+
+async function loadSearchData() {
+    if (searchDataLoaded) return;
+    try {
+        // 从持仓池 + 社保数据加载
+        const promises = [
+            fetch('data/latest.json').then(r => r.json()).catch(() => null),
+            fetch('data/social_holding_latest.json').then(r => r.json()).catch(() => null)
+        ];
+        const [latest, social] = await Promise.all(promises);
+
+        const map = new Map();
+        // 加持仓
+        if (latest && latest.holdings) {
+            latest.holdings.forEach(h => {
+                map.set(h.code, { code: h.code, name: h.name, source: '持仓' });
+            });
+        }
+        // 加社保持仓
+        if (social && social.holdings) {
+            social.holdings.forEach(h => {
+                if (!map.has(h.code)) {
+                    map.set(h.code, { code: h.code, name: h.name, source: '社保' });
+                } else {
+                    map.get(h.code).source += '/社保';
+                }
+            });
+        }
+        // 选股结果
+        if (latest && latest.picks && latest.picks.content) {
+            const codeMatches = latest.picks.content.match(/\b\d{6}\b/g) || [];
+            codeMatches.forEach(c => {
+                if (!map.has(c)) {
+                    // 从 markdown 中提取名称
+                    const nameMatch = latest.picks.content.match(new RegExp(`([\\u4e00-\\u9fa5]+)\\(${c}\\)`));
+                    if (nameMatch) {
+                        map.set(c, { code: c, name: nameMatch[1], source: '选股' });
+                    }
+                }
+            });
+        }
+        searchData = Array.from(map.values());
+        searchDataLoaded = true;
+        console.log('搜索数据已加载:', searchData.length, '只股票');
+    } catch (e) {
+        console.error('加载搜索数据失败:', e);
+    }
+}
+
+function doSearch(query) {
+    const results = document.getElementById('search-results');
+    const q = query.trim().toLowerCase();
+
+    if (!q) {
+        results.classList.remove('show');
+        results.innerHTML = '';
+        return;
+    }
+
+    // 智能匹配:代码前缀 / 代码包含 / 名称 / 拼音首字母 / 拼音全拼
+    const matches = searchData.filter(s => {
+        const code = String(s.code || '').toLowerCase();
+        const name = String(s.name || '').toLowerCase();
+        if (code.startsWith(q) || code.includes(q) || name.includes(q)) return true;
+        // 字母 → 拼音匹配
+        if (/^[a-z]+$/.test(q) && s.name) {
+            try {
+                if (typeof pinyinPro !== 'undefined' && pinyinPro.pinyin) {
+                    const initials = pinyinPro.pinyin(s.name, { pattern: 'first', toneType: 'none', type: 'array' }).join('').toLowerCase();
+                    const full = pinyinPro.pinyin(s.name, { toneType: 'none', type: 'array' }).join('').toLowerCase().replace(/\s/g, '');
+                    if (initials.includes(q)) return true;
+                    if (full.replace(/[^a-z]/g, '').includes(q)) return true;
+                }
+            } catch (e) {}
+        }
+        return false;
+    }).slice(0, 20);
+
+    if (matches.length === 0) {
+        results.innerHTML = '<div class="search-empty">无匹配股票</div>';
+    } else {
+        results.innerHTML = matches.map(s => `
+            <div class="search-result-item" data-code="${s.code}">
+                <span class="result-name">${s.name}</span>
+                <span class="result-code">${s.code}</span>
+                <div class="result-meta">${s.source || ''}</div>
+            </div>
+        `).join('');
+        // 点击 → 跳到社保持仓 + 过滤
+        results.querySelectorAll('.search-result-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const code = el.dataset.code;
+                const name = el.querySelector('.result-name').textContent;
+                // 切到 social_holding.html 并传 query
+                const url = `social_holding.html?code=${code}`;
+                frame.src = url;
+                titleEl.textContent = `🔍 ${name} (${code})`;
+                // 标记菜单高亮
+                navItems.forEach(n => n.classList.remove('active'));
+                document.querySelector('[data-url="social_holding.html"]').classList.add('active');
+                // 关闭搜索框
+                results.classList.remove('show');
+                document.getElementById('global-search').value = '';
+            });
+        });
+    }
+    results.classList.add('show');
+}
+
+let searchTimer;
+document.getElementById('global-search').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => doSearch(e.target.value), 150);
+});
+// 回车跳第一个结果
+document.getElementById('global-search').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const first = document.querySelector('.search-result-item');
+        if (first) first.click();
+    }
+});
+// 点其他地方关闭
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.global-search')) {
+        document.getElementById('search-results').classList.remove('show');
+    }
+});
+loadSearchData();
+
+// 更新时间戳
+function updateTime() {
+    const now = new Date();
+    const ts = now.getFullYear() + '-' +
+        String(now.getMonth()+1).padStart(2,'0') + '-' +
+        String(now.getDate()).padStart(2,'0') + ' ' +
+        String(now.getHours()).padStart(2,'0') + ':' +
+        String(now.getMinutes()).padStart(2,'0') + ':' +
+        String(now.getSeconds()).padStart(2,'0');
+    metaEl.textContent = ts + ' · CST';
+}
+updateTime();
+setInterval(updateTime, 1000);
+</script>
+
+</body>
+</html>

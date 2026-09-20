@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社保持股监控</title>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.25.0/dist/index.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --ef-blue: #005096;
+    --ef-blue-dark: #003d75;
+    --ef-blue-light: #1a6cb8;
+    --ef-blue-pale: #e6f3fb;
+    --bg-base: #ffffff;
+    --bg-soft: #f4f7f8;
+    --bg-side: #0a1929;
+    --bg-side-2: #112a45;
+    --bg-hover: #1d4068;
+    --border: #e1e8ed;
+    --text-primary: #1a2332;
+    --text-secondary: #5a6b7d;
+    --text-dim: #8b95a3;
+    --text-light: #e6edf3;
+    --text-light-dim: #94a3b8;
+    --up: #16a34a;
+    --down: #e63946;
+    --accent: #f59e0b;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.55;
+    min-height: 100vh;
+}
+.mono { font-family: "SF Mono", "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; }
+
+.layout { display: flex; min-height: 100vh; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 240px;
+    background: var(--bg-side);
+    background-image: linear-gradient(180deg, var(--bg-side) 0%, #0d2540 100%);
+    color: var(--text-light);
+    display: flex; flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+}
+.brand {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 12px;
+}
+.brand-logo {
+    width: 36px; height: 36px;
+    background: var(--ef-blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: #fff;
+}
+.brand-text .name { font-size: 15px; font-weight: 600; color: #fff; }
+.brand-text .name span { color: #ffd966; }
+.brand-text .tag { font-size: 9px; color: var(--text-light-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+
+.nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+.nav-section {
+    padding: 8px 20px 6px; font-size: 10px; font-weight: 600;
+    color: var(--text-light-dim); letter-spacing: 1.5px; text-transform: uppercase;
+}
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; color: var(--text-light-dim);
+    text-decoration: none; font-size: 13px;
+    border-left: 3px solid transparent; cursor: pointer; transition: all 0.15s;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-light); }
+.nav-item.active { background: var(--bg-side-2); color: #fff; border-left-color: var(--ef-blue); font-weight: 600; }
+.nav-item .icon { width: 18px; text-align: center; }
+.nav-item .badge { margin-left: auto; padding: 2px 7px; background: var(--ef-blue); border-radius: 8px; font-size: 10px; font-weight: 700; }
+
+/* ===== Main ===== */
+.main { flex: 1; padding: 24px 32px; max-width: 1400px; }
+.page-header {
+    border-bottom: 3px solid var(--ef-blue);
+    padding-bottom: 16px; margin-bottom: 24px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+}
+h1 { font-size: 22px; color: var(--ef-blue-dark); }
+.subtitle { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ===== Stats Cards ===== */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: var(--ef-blue-pale);
+    border: 1px solid var(--ef-blue-light);
+    border-radius: 8px;
+    padding: 14px 18px;
+}
+.stat-card .label { font-size: 11px; color: var(--ef-blue); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.stat-card .value { font-size: 24px; font-weight: 700; color: var(--ef-blue-dark); margin-top: 4px; }
+.stat-card .delta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.stat-card.up { background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.3); }
+.stat-card.up .label { color: var(--up); }
+.stat-card.up .value { color: var(--up); }
+.stat-card.down { background: rgba(230, 57, 70, 0.08); border-color: rgba(230, 57, 70, 0.3); }
+.stat-card.down .label { color: var(--down); }
+.stat-card.down .value { color: var(--down); }
+
+/* ===== Filter Bar ===== */
+.filter-bar {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.filter-bar label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.filter-bar input, .filter-bar select {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+    color: var(--text-primary);
+}
+.filter-bar input:focus, .filter-bar select:focus {
+    outline: none;
+    border-color: var(--ef-blue);
+}
+.filter-bar .stat {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+/* ===== Tables ===== */
+.section-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    margin: 24px 0 12px;
+}
+.section-title::before {
+    content: ''; width: 4px; height: 16px;
+    background: var(--ef-blue); border-radius: 2px;
+}
+.section-title .badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    background: var(--ef-blue-pale);
+    color: var(--ef-blue);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.data-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--ef-blue);
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+.data-table thead th:hover { background: var(--ef-blue-dark); }
+.data-table thead th .sort-arrow { opacity: 0.4; margin-left: 4px; font-size: 9px; }
+.data-table thead th.sort-asc .sort-arrow,
+.data-table thead th.sort-desc .sort-arrow { opacity: 1; color: #ffd966; }
+
+.data-table tbody td {
+    padding: 12px 14px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.data-table tbody tr:nth-child(even) td { background: var(--bg-soft); }
+.data-table tbody tr:hover td { background: var(--ef-blue-pale); cursor: pointer; }
+
+.name-cell { font-weight: 600; }
+.code-cell { color: var(--text-dim); font-size: 11px; }
+.action-new { color: var(--up); font-weight: 700; }
+.action-buy { color: var(--up); font-weight: 600; }
+.action-sell { color: var(--down); font-weight: 600; }
+.action-out { color: var(--down); font-weight: 700; }
+.action-hold { color: var(--text-dim); }
+
+.badge-mini {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.badge-mini-new { background: rgba(22, 163, 74, 0.12); color: var(--up); }
+.badge-mini-buy { background: rgba(22, 163, 74, 0.12); color: var(--up); }
+.badge-mini-sell { background: rgba(230, 57, 70, 0.12); color: var(--down); }
+.badge-mini-out { background: rgba(230, 57, 70, 0.15); color: var(--down); }
+.badge-mini-hold { background: rgba(139, 149, 163, 0.12); color: var(--text-dim); }
+
+.holder-list {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+.holder-list .holder-name { color: var(--text-primary); font-weight: 500; }
+.holder-list .holder-action {
+    display: inline-block;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-size: 9px;
+    margin-left: 4px;
+}
+
+/* ===== Top Menu Bar ===== */
+.top-menu {
+    background: #fff;
+    border-bottom: 2px solid var(--ef-blue);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 0 rgba(0,80,150,0.1);
+}
+.holdings-alert {
+    background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    padding: 12px 24px;
+    font-size: 13px;
+    color: #78350f;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.holdings-alert strong { color: #b45309; font-weight: 700; }
+.btn-back {
+    padding: 6px 14px;
+    background: var(--ef-blue);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s;
+}
+.btn-back:hover { background: var(--ef-blue-dark); }
+.top-menu .page-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.top-menu .meta {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: "SF Mono", monospace;
+}
+
+.layout { display: block; }
+.main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+footer {
+    margin-top: 48px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 11px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; }
+    .brand { border: none; padding: 12px 16px; }
+    .nav { display: flex; padding: 0; }
+    .nav-section { display: none; }
+    .nav-item { padding: 8px 14px; border-left: none; border-bottom: 3px solid transparent; }
+    .nav-item.active { border-left: none; border-bottom-color: var(--ef-blue); }
+}
+
+.sector-cloud { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 8px; }
+.sector-tag { padding: 3px 10px; border-radius: 12px; font-size: 12px; cursor: pointer; background: #f3f4f6; color: #6b7280; border: 1px solid transparent; transition: all 0.15s; user-select: none; }
+.sector-tag:hover { background: #e6f3fb; color: var(--primary); }
+.sector-tag.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.sector-tag .badge-num { display: inline-block; margin-left: 3px; padding: 0 5px; border-radius: 8px; font-size: 10px; background: rgba(255,255,255,0.25); }
+.sector-tag:not(.active) .badge-num { background: #e5e7eb; color: #6b7280; }
+
+.sector-tag.sub { background: #e6f3fb; color: var(--primary); font-size: 11px; padding: 2px 8px; }
+.sector-tag.sub.active { background: var(--primary); color: #fff; }
+.sector-divider { display: inline-block; width: 1px; height: 16px; background: var(--border); margin: 0 4px; vertical-align: middle; }
+
+.sector-search { padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; width: 100px; outline: none; }
+.sector-search:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,80,150,0.1); }
+.sector-tag.highlight { box-shadow: 0 0 0 2px var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- 顶部菜单栏(单层:返回主菜单 + 当前页) -->
+    <header class="top-menu">
+        <a href="menu.html" class="btn-back">← 返回菜单</a>
+        <div class="page-title">🏛️ 社保持股监控</div>
+        <div class="meta">
+            <span id="subtitle">加载中...</span> · 报告期:<span id="period-info">-</span>
+        </div>
+    </header>
+
+    <!-- 重要提示:持仓股票社保动态(高亮显示) -->
+    <div id="holdings-alert" class="holdings-alert" style="display:none;">
+        <span id="holdings-alert-icon">🔔</span>
+        <span id="holdings-alert-text"></span>
+    </div>
+
+    <main class="main">
+
+        <!-- 我的持仓 vs 社保对比 -->
+        <div class="section-title">
+            👤 我的持仓 vs 社保
+            <span class="badge" id="holdings-compare-count">0 只</span>
+        </div>
+        <div class="card">
+            <table class="data-table" id="holdings-compare-table">
+                <thead>
+                    <tr>
+                        <th>股票</th>
+                        <th>持仓</th>
+                        <th>板块</th>
+                        <th>社保状态</th>
+                        <th>社保占比</th>
+                    </tr>
+                </thead>
+                <tbody id="holdings-compare-tbody">
+                    <tr><td colspan="5" class="empty">加载中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats" id="stats"></div>
+
+        <!-- 变动对比 -->
+        <div class="section-title">
+            🔄 持仓变动(对比上期)
+            <span class="badge" id="changes-count">0 条变动</span>
+        </div>
+        <div class="filter-bar">
+            <label>🔍</label>
+            <input type="text" id="changes-search" placeholder="搜索股票代码/名称/社保组合" style="width: 240px;">
+            <label>板块:</label>
+            <div class="sector-cloud" id="changes-sector-cloud"></div>
+            <label>排序:</label>
+            <select id="changes-type">
+                <option value="total_pct">📊 社保占比↓</option>
+                <option value="total_shares">💰 持股数↓</option>
+                <option value="price">💵 股价↓</option>
+                <option value="change_pct">📈 涨幅↓</option>
+                <option value="code">🔤 代码</option>
+            </select>
+            <div class="stat" id="changes-stat"></div>
+        </div>
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>股票</th>
+                        <th>变动</th>
+                        <th class="sortable" data-key="delta_shares" data-type="num">变动数量<span class="sort-arrow">▲</span></th>
+                        <th>本期持股</th>
+                        <th>上期持股</th>
+                        <th>股价</th>
+                        <th>社保持股市值</th>
+                        <th>板块</th>
+                        <th>持有社保</th>
+                    </tr>
+                </thead>
+                <tbody id="changes-tbody">
+                    <tr><td colspan="9" class="empty">加载中...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            小龙虾接包系统 · 社保持股监控 · 数据每日更新
+        </footer>
+    </main>
+</div>
+
+<script>
+let DATA = null;
+
+let __SECTOR_MAP__ = null;
+async function loadSectorMap() {
+  if (__SECTOR_MAP__) return __SECTOR_MAP__;
+  try {
+    const r = await fetch('data/industry_sector_map.json');
+    if (r.ok) __SECTOR_MAP__ = await r.json();
+  } catch(e) { __SECTOR_MAP__ = {}; }
+  return __SECTOR_MAP__ || {};
+}
+function normalizeIndustry(s) {
+  return String(s || '').replace(/Ⅱ$/, '').trim();
+}
+function getSector(industry) {
+  const ind = normalizeIndustry(industry);
+  if (!__SECTOR_MAP__) return '未分类';
+  for (const [sector, items] of Object.entries(__SECTOR_MAP__)) {
+    if (items.map(normalizeIndustry).includes(ind)) return sector;
+  }
+  return '未分类';
+}
+function renderSectorCloud(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || !DATA || !DATA.holdings) return;
+
+  // 统计板块和小板块
+  const sectorCounts = { '全部': DATA.holdings.length };
+  const indCounts = {}; // industry → count
+  DATA.holdings.forEach(h => {
+    const s = getSector(h.industry);
+    sectorCounts[s] = (sectorCounts[s] || 0) + 1;
+    indCounts[h.industry] = (indCounts[h.industry] || 0) + 1;
+  });
+
+  const allSectors = Object.keys(sectorCounts).filter(s => s !== '全部').sort((a, b) => sectorCounts[b] - sectorCounts[a]);
+
+  // 穿透式搜索：一次搜索同时匹配大板块和小板块
+  const search = (window.__sectorSearch || '').trim().toLowerCase();
+  let matchedSectors = allSectors;
+  let matchedIndustries = {}; // sector → array of matched industries
+  if (search) {
+    matchedSectors = allSectors.filter(s => s.toLowerCase().includes(search));
+    // 在所有行业里搜
+    Object.keys(indCounts).forEach(ind => {
+      if (ind.toLowerCase().includes(search)) {
+        const sector = getSector(ind);
+        if (!matchedIndustries[sector]) matchedIndustries[sector] = [];
+        matchedIndustries[sector].push(ind);
+      }
+    });
+  }
+
+  const currentSector = window.__currentSector || '全部';
+  const currentIndustry = window.__currentIndustry || null;
+
+  // 渲染搜索框（一级合并，宽度稍大）
+  let html = '<input type="text" class="sector-search" id="sector-search" placeholder="🔍 搜索板块/行业(如:医、电、银行)" value="' + (window.__sectorSearch || '') + '" style="width:180px">';
+
+  // 渲染"全部"
+  html += '<span class="sector-tag ' + (currentSector === '全部' && !currentIndustry ? 'active' : '') + '" data-sector="全部">全部<span class="badge-num">' + sectorCounts['全部'] + '</span></span>';
+
+  // 渲染匹配的大板块
+  matchedSectors.forEach(s => {
+    const active = (s === currentSector && !currentIndustry) ? 'active' : '';
+    html += '<span class="sector-tag ' + active + '" data-sector="' + s + '">' + s + '<span class="badge-num">' + sectorCounts[s] + '</span></span>';
+  });
+
+  // 穿透式：搜索时把匹配的小板块按所属大板块分组显示在底部
+  if (search) {
+    const sectorNames = Object.keys(matchedIndustries);
+    if (sectorNames.length > 0) {
+      html += '<span class="sector-divider"></span>';
+      html += '<span style="color:var(--primary);font-size:11px;padding:0 4px">↓ 匹配行业</span>';
+      sectorNames.sort().forEach(sec => {
+        matchedIndustries[sec].forEach(ind => {
+          const active = (sec === currentSector && ind === currentIndustry) ? 'active' : '';
+          html += '<span class="sector-tag sub ' + active + '" data-sector="' + sec + '" data-industry="' + ind + '">' + ind + '<span class="badge-num">' + indCounts[ind] + '</span><span style="font-size:10px;color:#94a3b8;margin-left:2px">·' + sec + '</span></span>';
+        });
+      });
+    }
+    if (matchedSectors.length === 0 && sectorNames.length === 0) {
+      html += '<span style="color:#9ca3af;font-size:12px;margin-left:8px">无匹配板块/行业</span>';
+    }
+  } else if (currentSector && currentSector !== '全部') {
+    // 无搜索时：显示二级展开（小板块下拉）
+    const inds = Object.keys(indCounts).filter(ind => getSector(ind) === currentSector).sort((a, b) => indCounts[b] - indCounts[a]);
+    html += '<span class="sector-divider"></span>';
+    html += '<span class="sector-tag sub ' + (currentIndustry === null ? 'active' : '') + '" data-sector="' + currentSector + '" data-industry="">' + currentSector + ' · 全部<span class="badge-num">' + sectorCounts[currentSector] + '</span></span>';
+    inds.forEach(ind => {
+      const active = (ind === currentIndustry) ? 'active' : '';
+      html += '<span class="sector-tag sub ' + active + '" data-sector="' + currentSector + '" data-industry="' + ind + '">' + ind + '<span class="badge-num">' + indCounts[ind] + '</span></span>';
+    });
+  }
+
+  container.innerHTML = html;
+
+  // 绑定点击
+  container.querySelectorAll('.sector-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const sector = tag.dataset.sector;
+      const industry = tag.dataset.industry;
+      if (industry !== undefined && industry !== null) {
+        if (industry === '') {
+          window.__currentIndustry = null;
+        } else {
+          window.__currentSector = sector;
+          window.__currentIndustry = industry;
+        }
+      } else {
+        window.__currentSector = sector;
+        window.__currentIndustry = null;
+      }
+      renderSectorCloud(containerId);
+      renderChangesFromHoldings();
+    });
+  });
+
+  // 绑定搜索框
+  const secInput = container.querySelector('#sector-search');
+  if (secInput) {
+    secInput.addEventListener('input', (e) => {
+      window.__sectorSearch = e.target.value;
+      renderSectorCloud(containerId);
+    });
+    secInput.addEventListener('click', (e) => e.stopPropagation());
+  }
+}
+
+async function loadData() {
+    try {
+        const r = await fetch('data/social_holding_latest.json');
+        DATA = await r.json();
+        // 加载板块映射并渲染板块云
+        await loadSectorMap();
+        renderSectorCloud('changes-sector-cloud');
+        render();
+    } catch (e) {
+        document.getElementById('holdings-tbody').innerHTML = `<tr><td colspan="8" class="empty">加载失败: ${e.message}</td></tr>`;
+    }
+}
+
+function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+// 完整拼音支持(用 pinyin-pro CDN 库)
+function getPinyinInitials(name) {
+    try {
+        if (typeof pinyinPro === 'undefined' || !pinyinPro.pinyin) return '';
+        const result = pinyinPro.pinyin(name, { pattern: 'first', toneType: 'none', type: 'array' });
+        return Array.isArray(result) ? result.join('') : '';
+    } catch (e) { return ''; }
+}
+
+function getPinyinFull(name) {
+    try {
+        if (typeof pinyinPro === 'undefined' || !pinyinPro.pinyin) return '';
+        const result = pinyinPro.pinyin(name, { toneType: 'none', type: 'array' });
+        return Array.isArray(result) ? result.join('') : '';
+    } catch (e) { return ''; }
+}
+
+function formatNum(n, digits = 0) {
+    if (n == null || isNaN(n)) return '-';
+    return Number(n).toLocaleString('zh', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
+function actionClass(action) {
+    return {
+        '新进': 'badge-mini-new',
+        '增加': 'badge-mini-buy',
+        '减少': 'badge-mini-sell',
+        '不变': 'badge-mini-hold'
+    }[action] || 'badge-mini-hold';
+}
+
+function render() {
+    // 头部信息
+    document.getElementById('subtitle').textContent =
+        `${DATA.generated_at.split('T')[0]} 自动采集 · 数据源:东方财富十大股东公告`;
+    document.getElementById('period-info').textContent = DATA.period || DATA.latest_period || '20250930';
+
+    // 统计卡片(基于 holdings 字段)
+    const socialCount = DATA.holdings ? DATA.holdings.length : 0;
+    const totalHolders = DATA.holdings ? DATA.holdings.reduce((s, h) => s + ((h.social_holders || h.holders || []).length), 0) : 0;
+    const totalPct = DATA.holdings ? DATA.holdings.reduce((s, h) => s + (h.total_pct || 0), 0) : 0;
+    const s = DATA.stats || { new_stocks: 0, increased: 0, decreased: 0, exited: 0 };
+    document.getElementById('stats').innerHTML = `
+        <div class="stat-card"><div class="label">持仓股票</div><div class="value">${socialCount}</div><div class="delta">社保组合 ${totalHolders} 个</div></div>
+        <div class="stat-card up"><div class="label">新进</div><div class="value">+${s.new_stocks || 0}</div><div class="delta">新进入场</div></div>
+        <div class="stat-card up"><div class="label">增持</div><div class="value">+${s.increased || 0}</div><div class="delta">增加持仓</div></div>
+        <div class="stat-card down"><div class="label">减持</div><div class="value">-${s.decreased || 0}</div><div class="delta">减少持仓</div></div>
+        <div class="stat-card down"><div class="label">退出</div><div class="value">-${s.exited || 0}</div><div class="delta">不再持有</div></div>
+    `;
+
+    // 持仓变动(直接显示 holdings 列表)
+    document.getElementById('changes-count').textContent = `${socialCount} 只持仓 · ${totalHolders} 个社保组合 · 占比 ${totalPct.toFixed(2)}%`;
+    renderChanges();
+
+    // 我的持仓 vs 社保对比
+    renderHoldingsCompare();
+
+    // 持仓股票社保动态提示
+    renderHoldingsAlert();
+}
+
+function renderHoldingsAlert() {
+    const alertEl = document.getElementById('holdings-alert');
+    const textEl = document.getElementById('holdings-alert-text');
+    if (!alertEl || !textEl) return;
+
+    // 检查 changes 字段(对比上一期)
+    const changes = (DATA.changes || []).filter(c => c.type === '新增' || c.type === '增持');
+    const myCodes = new Set(USER_HOLDINGS.map(u => String(u.code || '').padStart(6, '0').replace(/\.HK$/i, '')));
+    const myChanges = changes.filter(c => myCodes.has(c.code));
+
+    if (myChanges.length > 0) {
+        const lines = myChanges.map(c =>
+            `<strong>${c.name || c.code}</strong> 社保 <strong>${c.type === '新增' ? '新进' : '增持'}</strong> ${(c.delta_shares / 1e6).toFixed(1)}M股(${c.delta_pct.toFixed(2)}%)`
+        );
+        textEl.innerHTML = `🔔 您的持仓股票社保动态:${lines.join(' · ')}`;
+        alertEl.style.display = 'flex';
+    } else {
+        alertEl.style.display = 'none';
+    }
+}
+
+function renderChangesFromHoldings() {
+    const search = (document.getElementById('changes-search')?.value || '').trim().toLowerCase();
+    const sortBy = document.getElementById('changes-type')?.value || 'total_pct';
+    const sectorFilter = window.__currentSector || '全部';
+
+    let list = (DATA.holdings || []).slice();
+
+    // 一级板块筛选
+    if (sectorFilter !== '全部') {
+      list = list.filter(h => getSector(h.industry) === sectorFilter);
+    }
+    // 二级小板块筛选
+    if (window.__currentIndustry) {
+      list = list.filter(h => h.industry === window.__currentIndustry);
+    }
+
+    // 智能搜索:代码/名称/社保组合/拼音首字母/拼音全拼
+    if (search) {
+        list = list.filter(h => {
+            const code = String(h.code || '').toLowerCase();
+            const name = String(h.name || '').toLowerCase();
+            if (code.includes(search) || name.includes(search)) return true;
+            const holders = h.social_holders || [];
+            if (holders.some(hold => String(hold.name || '').toLowerCase().includes(search))) return true;
+            // 字母搜索 → 拼音匹配
+            if (/^[a-z]+$/.test(search) && h.name) {
+                try {
+                    // 首字母搜索(bhgf → 滨化股份)
+                    const initials = getPinyinInitials(h.name).toLowerCase();
+                    if (initials.includes(search) || initials.startsWith(search)) return true;
+                    // 拼音全拼搜索(binhua → 滨化)
+                    const full = getPinyinFull(h.name).toLowerCase().replace(/\s/g, '');
+                    if (full.replace(/[^a-z]/g, '').includes(search.replace(/\s/g, ''))) return true;
+                } catch (e) {}
+            }
+            return false;
+        });
+    }
+
+    // 排序
+    if (sortBy === 'total_pct') list.sort((a, b) => (b.total_pct || 0) - (a.total_pct || 0));
+    else if (sortBy === 'total_shares') list.sort((a, b) => (b.total_social_shares || 0) - (a.total_social_shares || 0));
+    else if (sortBy === 'price') list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    else if (sortBy === 'change_pct') list.sort((a, b) => (b.change_pct || 0) - (a.change_pct || 0));
+    else if (sortBy === 'code') list.sort((a, b) => String(a.code || '').localeCompare(String(b.code || '')));
+
+    const tbody = document.getElementById('changes-tbody');
+    const statEl = document.getElementById('changes-stat');
+    if (statEl) statEl.textContent = `显示 ${list.length} / ${DATA.holdings ? DATA.holdings.length : 0} 只`;
+
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty">无匹配</td></tr>';
+        return;
+    }
+
+    // 显示全部(374只),不加限制
+    const display = list;
+
+    tbody.innerHTML = display.map(h => {
+        const cp = h.change_pct || 0;
+        const cpCls = cp > 0 ? 'change-up' : cp < 0 ? 'change-down' : '';
+        const cpText = cp >= 0 ? '+' : '';
+        const holders = h.social_holders || h.holders || [];
+        const holdersText = holders.map(hold =>
+            `<div class="holder-name">${escapeHtml(hold.name)} <span style="color:var(--text-dim);font-size:10px;">${(hold.shares || 0).toLocaleString('zh')}股 (${hold.pct}%)</span></div>`
+        ).join('');
+        const priceText = h.price ? `¥${h.price.toFixed(2)}` : '-';
+        const nameDisplay = h.name ? escapeHtml(h.name) : `股票${escapeHtml(h.code)}`;
+        const efUrl = `https://gu.qq.com/${h.code.startsWith('6') || h.code.startsWith('9') ? 'sh' : 'sz'}${h.code}`;
+        const sseUrl = `http://www.sse.com.cn/assortment/stock/list/info/announcement/index.shtml?productId=${h.code}`;
+        return `<tr>
+            <td class="name-cell">
+                <a href="${efUrl}" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;font-weight:600;">${nameDisplay}</a>
+                <span style="color:var(--text-dim);font-size:11px;margin-left:4px;">(${escapeHtml(h.code)})</span>
+            </td>
+            <td><div class="holder-list">${holdersText}</div></td>
+            <td class="mono">${(h.total_social_shares || 0).toLocaleString('zh')}</td>
+            <td class="mono" style="font-weight:600;color:var(--ef-blue);">${(h.total_pct || 0).toFixed(2)}%</td>
+            <td class="mono">${priceText}</td>
+            <td class="mono ${cpCls}">${cpText}${cp.toFixed(2)}%</td>
+            <td class="mono">¥${((h.total_market_cap || 0) / 1e8).toFixed(2)}亿</td>
+        </tr>`;
+    }).join('');
+
+}
+
+function renderChanges() {
+    const search = (document.getElementById('changes-search')?.value || '').trim().toLowerCase();
+    const type = document.getElementById('changes-type')?.value || 'total_pct';
+
+    let list = (DATA.changes || []).slice();
+
+    // 搜索
+    if (search) {
+        list = list.filter(c => {
+            const code = String(c.code || '').toLowerCase();
+            const name = String(c.name || '').toLowerCase();
+            if (code.includes(search) || name.includes(search)) return true;
+            const holders = c.holders || c.social_holders || [];
+            if (holders.some(h => String(h.name || '').toLowerCase().includes(search))) return true;
+            // 拼音搜索
+            if (/^[a-z]+$/.test(search) && c.name) {
+                try {
+                    if (getPinyinInitials(c.name).toLowerCase().includes(search)) return true;
+                    if (getPinyinFull(c.name).toLowerCase().replace(/\s/g,'').includes(search)) return true;
+                } catch(e) {}
+            }
+            return false;
+        });
+    }
+
+    // 排序
+    if (type === 'total_pct') list.sort((a, b) => (b.pct || 0) - (a.pct || 0));
+    else if (type === 'total_shares') list.sort((a, b) => (b.shares || 0) - (a.shares || 0));
+    else if (type === 'price') list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    else if (type === 'change_pct') {
+        // 算涨跌率
+        list.sort((a, b) => {
+            const ra = a.prev_shares > 0 ? (a.shares - a.prev_shares) / a.prev_shares : (a.shares > 0 ? 1 : 0);
+            const rb = b.prev_shares > 0 ? (b.shares - b.prev_shares) / b.prev_shares : (b.shares > 0 ? 1 : 0);
+            return rb - ra;
+        });
+    }
+    else if (type === 'code') list.sort((a, b) => String(a.code || '').localeCompare(String(b.code || '')));
+
+    const tbody = document.getElementById('changes-tbody');
+    const statEl = document.getElementById('changes-stat');
+    if (statEl) statEl.textContent = `显示 ${list.length} / ${(DATA.changes || []).length} 只`;
+
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty">无匹配</td></tr>';
+        return;
+    }
+
+    const changeLabelMap = {'新进':'新进','增持':'增持','减持':'减持','不变':'不变'};
+    const changeClsMap = {'新进':'badge-mini-new','增持':'badge-mini-buy','减持':'badge-mini-sell','不变':'badge-mini-hold'};
+
+    tbody.innerHTML = list.map(c => {
+        const change = c.change || '不变';
+        const label = changeLabelMap[change] || change;
+        const cls = changeClsMap[change] || 'badge-mini-hold';
+        const arrow = change === '减持' ? '🔻' : change === '新进' || change === '增持' ? '🔺' : '➖';
+
+        const curShares = c.shares || 0;
+        const prevShares = c.prev_shares || 0;
+        const delta = curShares - prevShares;
+        const price = c.price || 0;
+        const marketCapSocial = price > 0 ? (curShares * price / 1e8) : 0;
+
+        const nameDisplay = c.name ? escapeHtml(c.name) : `股票${escapeHtml(c.code)}`;
+        const efUrl = `https://gu.qq.com/${c.code.startsWith('6') || c.code.startsWith('9') ? 'sh' : 'sz'}${c.code}`;
+
+        const deltaStr = delta >= 0 ? `+${(delta/1e6).toFixed(1)}M` : `${(delta/1e6).toFixed(1)}M`;
+        const deltaColor = delta > 0 ? 'var(--up)' : delta < 0 ? 'var(--down)' : 'var(--text-dim)';
+        const pctStr = c.pct ? `${c.pct.toFixed(2)}%` : '-';
+
+        const priceStr = price > 0 ? `¥${price.toFixed(2)}` : '-';
+        const marketStr = marketCapSocial > 0 ? `¥${marketCapSocial.toFixed(2)}亿` : '-';
+        const industryStr = escapeHtml(c.industry || '-');
+        const holders = c.social_holders || c.holders || [];
+        const holdersText = holders.map(hld =>
+            `<div style="font-size:11px;line-height:1.4;">${escapeHtml(hld.name)} <span style="color:var(--text-dim);">${(hld.shares||0)>0?(hld.shares/1e6).toFixed(1)+'M':'?'}(${(hld.pct||0).toFixed(2)}%)</span></div>`
+        ).join('');
+
+        return `<tr>
+            <td class="name-cell">
+                <a href="${efUrl}" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;font-weight:600;">${nameDisplay}</a>
+                <span style="color:var(--text-dim);font-size:11px;margin-left:4px;">(${escapeHtml(c.code)})</span>
+            </td>
+            <td><span class="badge-mini ${cls}">${arrow} ${label}</span></td>
+            <td class="mono" style="color:${deltaColor};font-weight:700;">${deltaStr}</td>
+            <td class="mono">${curShares > 0 ? (curShares/1e6).toFixed(1)+'M' : '-'}</td>
+            <td class="mono">${prevShares > 0 ? (prevShares/1e6).toFixed(1)+'M' : '-'}</td>
+            <td class="mono">${priceStr}</td>
+            <td class="mono">${marketStr}</td>
+            <td class="mono" style="color:var(--text-dim);font-size:12px;">${industryStr}</td>
+            <td class="mono" style="font-size:11px;line-height:1.4;">${holdersText}</td>
+        </tr>`;
+    }).join('');
+}
+
+function renderHoldings() {
+    // 全部持仓功能已删除 — 只保留持仓变动
+}
+
+document.getElementById('search-input')?.addEventListener('input', renderHoldings);
+document.getElementById('action-filter')?.addEventListener('change', renderHoldings);
+document.getElementById('sort-key')?.addEventListener('change', renderHoldings);
+
+// 持仓变动表的事件绑定
+document.getElementById('changes-search')?.addEventListener('input', renderChanges);
+document.getElementById('changes-type')?.addEventListener('change', renderChanges);
+
+// 加载用户持仓(用于对比)
+let USER_HOLDINGS = [];
+async function loadUserHoldings() {
+    try {
+        const r = await fetch('data/holdings_compare.json');
+        USER_HOLDINGS = await r.json();
+    } catch (e) {
+        // fallback:读 latest.json 的 holdings
+        try {
+            const r = await fetch('data/latest.json');
+            const d = await r.json();
+            USER_HOLDINGS = (d.holdings || []).map(h => ({
+                code: h.code, name: h.name, sector: h.sector
+            }));
+        } catch {
+            USER_HOLDINGS = [];
+        }
+    }
+}
+
+function renderHoldingsCompare() {
+    const tbody = document.getElementById('holdings-compare-tbody');
+    const countEl = document.getElementById('holdings-compare-count');
+    if (!USER_HOLDINGS || USER_HOLDINGS.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">无持仓数据</td></tr>';
+        countEl.textContent = '0 只';
+        return;
+    }
+    const socialMap = {};
+    (DATA.holdings || []).forEach(h => { socialMap[h.code] = h; });
+    countEl.textContent = USER_HOLDINGS.length + ' 只';
+
+    const usersWithStatus = USER_HOLDINGS.map(u => {
+        const rawCode = String(u.code || '');
+        const isHK = /\.HK$/i.test(rawCode) || /^0\d{4}\.HK$/i.test(rawCode);
+        const code = rawCode.padStart(6, '0').replace(/\.HK$/i, '');
+        const s = !isHK ? socialMap[code] : null;
+        let status, pctText, statusColor;
+        if (isHK) {
+            status = '🌏 港股(社保不适用)';
+            statusColor = 'var(--text-dim)';
+            pctText = '-';
+        } else if (s) {
+            status = '✅ 有社保';
+            statusColor = 'var(--down)';
+            pctText = (s.total_pct || 0).toFixed(2) + '%';
+        } else {
+            status = '❌ 暂无社保';
+            statusColor = 'var(--up)';
+            pctText = '0%';
+        }
+        const name = u.name && !u.name.startsWith('股票') ? u.name : (s ? s.name : '');
+        return { name, code: rawCode, sector: u.sector, status, pctText, statusColor };
+    });
+
+    tbody.innerHTML = usersWithStatus.map(u => {
+        return `<tr>
+            <td class="name-cell">${escapeHtml(u.name || '股票' + u.code)}(<span class="code-cell mono">${escapeHtml(u.code)}</span>)</td>
+            <td>✅ 当前持仓</td>
+            <td class="sector-cell">${escapeHtml(u.sector || '-')}</td>
+            <td style="color:${u.statusColor};font-weight:600;">${u.status}</td>
+            <td class="mono" style="font-weight:600;color:var(--ef-blue);">${u.pctText}</td>
+        </tr>`;
+    }).join('');
+
+    const note = `
+        <tr><td colspan="5" style="text-align:left;color:var(--text-dim);font-size:11px;padding:8px 16px;">
+            💡 提示:持仓不在社保 = 该股十大股东中暂无"全国社保基金"任何组合。<br>
+            <span style="margin-left:20px;">可能原因:① 社保刚退出/尚未进入 · ② 小盘股(扫描范围外)· ③ 港股不适用社保</span>
+        </td></tr>`;
+    tbody.innerHTML += note;
+}
+
+function renderHoldingsAlert() {
+    const alertEl = document.getElementById('holdings-alert');
+    const textEl = document.getElementById('holdings-alert-text');
+    if (!alertEl || !textEl) return;
+
+    const changes = (DATA.changes || []).filter(c => c.type === '新增' || c.type === '增持');
+    const myCodes = new Set(USER_HOLDINGS
+        .filter(u => !/\.HK$/i.test(u.code))
+        .map(u => String(u.code || '').padStart(6, '0').replace(/\.HK$/i, '')));
+    const myChanges = changes.filter(c => myCodes.has(c.code));
+
+    if (myChanges.length > 0) {
+        const lines = myChanges.map(c =>
+            `<strong>${c.name || c.code}</strong> 社保 <strong>${c.type === '新增' ? '新进' : '增持'}</strong> ${(c.delta_shares / 1e6).toFixed(1)}M股(${c.delta_pct.toFixed(2)}%)`
+        );
+        textEl.innerHTML = `🔔 您的持仓股票社保动态:${lines.join(' · ')}`;
+        alertEl.style.display = 'flex';
+    } else {
+        alertEl.style.display = 'none';
+    }
+}
+
+loadData();
+loadUserHoldings();
+
+// 板块筛选
+window.__currentSector = '全部';
+loadSectorMap().then(() => {
+  renderSectorCloud('changes-sector-cloud');
+});
+
+// 如果 URL 带 ?code=xxxx 参数,自动填到搜索框
+const urlParams = new URLSearchParams(location.search);
+const initialCode = urlParams.get('code');
+if (initialCode) {
+    setTimeout(() => {
+        const searchInput = document.getElementById('changes-search');
+        if (searchInput) {
+            searchInput.value = initialCode;
+            renderChanges();
+        }
+    }, 100);
+}
+</script>
+
+</body>
+</html>

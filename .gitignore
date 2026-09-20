@@ -1,0 +1,17 @@
+# 敏感目录
+approval/
+invoice/
+receivable/
+logs/
+history/
+*.zip
+vision.jpg
+因子效果日志.json
+*.drawio
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

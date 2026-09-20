@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>资讯监控</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --ef-blue: #005096;
+    --ef-blue-dark: #003d75;
+    --ef-blue-light: #1a6cb8;
+    --ef-blue-pale: #e6f3fb;
+    --bg-base: #ffffff;
+    --bg-soft: #f4f7f8;
+    --bg-card: #ffffff;
+    --border: #e1e8ed;
+    --text-primary: #1a2332;
+    --text-secondary: #5a6b7d;
+    --text-dim: #8b95a3;
+    --up: #e63946;
+    --down: #16a34a;
+    --accent: #f59e0b;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+.mono { font-family: "SF Mono", "JetBrains Mono", "Menlo", monospace; font-variant-numeric: tabular-nums; }
+
+/* Top bar */
+.topbar {
+    background: linear-gradient(90deg, var(--ef-blue-dark) 0%, var(--ef-blue) 100%);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,80,150,0.15);
+}
+.topbar-back {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.topbar-back:hover { background: rgba(255,255,255,0.25); }
+.topbar-title { font-size: 16px; font-weight: 600; color: #fff; }
+.topbar-meta { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.7); font-family: "SF Mono", monospace; }
+.live-dot { display: inline-block; width: 6px; height: 6px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 6px #4ade80; animation: pulse 1.8s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Container */
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 28px; }
+
+/* Section title */
+.section-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    margin: 28px 0 14px;
+}
+.section-title:first-child { margin-top: 0; }
+.section-title::before { content: ''; width: 4px; height: 16px; background: var(--ef-blue); border-radius: 2px; }
+.badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    background: var(--ef-blue-pale);
+    color: var(--ef-blue);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+}
+
+/* Source filter tabs */
+.source-tabs {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.source-tab {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+}
+.source-tab:hover { border-color: var(--ef-blue); color: var(--ef-blue); }
+.source-tab.active { background: var(--ef-blue); color: #fff; border-color: var(--ef-blue); }
+
+/* Card */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* News list */
+.news-list { display: flex; flex-direction: column; }
+.news-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; line-height: 1.5;
+    transition: background 0.12s;
+}
+.news-item:last-child { border-bottom: none; }
+.news-item:hover { background: var(--ef-blue-pale); }
+.news-interpret { font-size: 12px; color: var(--text-secondary); margin: 4px 0 8px 36px; padding: 6px 10px; background: var(--bg-soft); border-left: 3px solid var(--ef-blue); border-radius: 0 4px 4px 0; line-height: 1.6; }
+.news-tag { flex-shrink: 0; font-size: 14px; padding-top: 1px; }
+.news-title { flex: 1; color: var(--text-primary); word-break: break-all; }
+.news-src { flex-shrink: 0; color: var(--text-dim); font-size: 11px; font-family: "SF Mono", monospace; white-space: nowrap; padding-top: 2px; }
+.news-time { flex-shrink: 0; color: var(--text-dim); font-size: 10px; font-family: "SF Mono", monospace; white-space: nowrap; }
+
+/* Loading / empty */
+.loading { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
+.empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
+
+/* Footer */
+footer { margin-top: 48px; padding: 20px 28px; background: var(--bg-soft); border-top: 1px solid var(--border); color: var(--text-dim); font-size: 11px; text-align: center; }
+
+@media (max-width: 640px) {
+    .topbar { padding: 12px 16px; }
+    .container { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <a class="topbar-back" href="menu.html">← 菜单</a>
+    <span class="topbar-title">📰 资讯监控</span>
+    <span class="live-dot"></span>
+    <span class="topbar-meta" id="meta">加载中...</span>
+</div>
+
+<div class="container">
+    <!-- 来源筛选 -->
+    <div class="source-tabs" id="source-tabs"></div>
+
+    <!-- 统计摘要 -->
+    <div id="stats-row" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;"></div>
+
+    <!-- 全部资讯 -->
+    <div class="section-title">全部资讯 <span class="badge" id="total-count">--</span></div>
+    <div class="card">
+        <div class="news-list" id="news-list">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    数据来源：东方财富 · 同花顺快讯 · 蓝鲸财经 · CNBC · Yahoo Finance · Investing.com · Reuters（部分）<br>
+    每 15 分钟自动更新 · Hermes Agent
+</footer>
+
+<script>
+// 全局数据
+let allNews = [];
+let activeSource = 'all';
+
+const SOURCE_LABELS = {
+    'all': '全部',
+    'eastmoney': '东方财富',
+    '10jqka': '同花顺',
+    'lanjing': '蓝鲸',
+    'cnbc': 'CNBC',
+    'yahoo': 'Yahoo',
+    'investing': 'Investing',
+    'bbc': 'BBC',
+    'reuters': 'Reuters'
+};
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getSourceKey(title, source) {
+    const src = (source || '').toLowerCase();
+    if (src.includes('东方财富') || src.includes('choice') || src.includes('南方财经')) return 'eastmoney';
+    if (src.includes('同花顺')) return '10jqka';
+    if (src.includes('蓝鲸')) return 'lanjing';
+    if (src.includes('cnbc')) return 'cnbc';
+    if (src.includes('yahoo')) return 'yahoo';
+    if (src.includes('investing')) return 'investing';
+    if (src.includes('bbc')) return 'bbc';
+    if (src.includes('reuters')) return 'reuters';
+    // 东方财富来源的新闻没有标记
+    return 'eastmoney';
+}
+
+function filterNews(news, source) {
+    if (source === 'all') return news;
+    return news.filter(n => getSourceKey(n.title, n.source) === source);
+}
+
+function renderNewsList(news) {
+    const list = document.getElementById('news-list');
+    if (!news || news.length === 0) {
+        list.innerHTML = '<div class="empty">暂无数据</div>';
+        return;
+    }
+    list.innerHTML = news.map(n => {
+        const tag = escapeHtml(n.tag || '🚨');
+        const title = escapeHtml(n.title || '');
+        const source = escapeHtml(n.source || '');
+        const url = n.url ? escapeHtml(n.url) : '';
+        const interp = n.interpretation ? escapeHtml(n.interpretation) : '';
+        const titleHtml = url
+            ? `<a href="${url}" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;">${title}</a>`
+            : title;
+        const interpHtml = interp
+            ? `<div class="news-interpret">💡 ${interp}</div>`
+            : '';
+        return `<div class="news-item">
+            <span class="news-tag">${tag}</span>
+            <span class="news-title">${titleHtml}</span>
+            <span class="news-time">${source.match(/\d{2}-\d{2}/) ? source.match(/\d{2}-\d{2} \d{2}:\d{2}/)?.[0] || '' : ''}</span>
+            <span class="news-src">${source}</span>
+        </div>${interpHtml}`;
+    }).join('');
+    document.getElementById('total-count').textContent = news.length + ' 条';
+}
+
+function renderTabs(sourceCounts) {
+    const tabs = document.getElementById('source-tabs');
+    const all = Object.values(sourceCounts).reduce((a, b) => a + b, 0);
+    let html = `<div class="source-tab ${activeSource === 'all' ? 'active' : ''}" onclick="setSource('all')">全部 (${all})</div>`;
+    for (const [key, label] of Object.entries(SOURCE_LABELS)) {
+        if (key === 'all') continue;
+        const count = sourceCounts[key] || 0;
+        if (count > 0) {
+            html += `<div class="source-tab ${activeSource === key ? 'active' : ''}" onclick="setSource('${key}')">${label} (${count})</div>`;
+        }
+    }
+    tabs.innerHTML = html;
+}
+
+function renderStats(news) {
+    const counts = {};
+    news.forEach(n => {
+        const k = getSourceKey(n.title, n.source);
+        counts[k] = (counts[k] || 0) + 1;
+    });
+    const el = document.getElementById('stats-row');
+    el.innerHTML = Object.entries(counts).map(([k, v]) => {
+        const labels = {eastmoney:'东方财富', '10jqka':'同花顺', lanjing:'蓝鲸', cnbc:'CNBC', yahoo:'Yahoo Finance', investing:'Investing.com'};
+        const colors = {eastmoney:'#e63946', '10jqka':'#005096', lanjing:'#16a34a', cnbc:'#c0392b', yahoo:'#8e44ad', investing:'#f39c12'};
+        return `<div style="background:${colors[k] || '#888'}22;border:1px solid ${colors[k] || '#888'}44;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;">
+            <span style="color:${colors[k] || '#888'}">${labels[k] || k}</span>
+            <span style="margin-left:8px;color:var(--text-primary);font-size:16px;">${v}</span>
+            <span style="color:var(--text-dim);font-size:10px;margin-left:2px;">条</span>
+        </div>`;
+    }).join('');
+}
+
+function setSource(src) {
+    activeSource = src;
+    const filtered = filterNews(allNews, src);
+    renderNewsList(filtered);
+    document.querySelectorAll('.source-tab').forEach(t => {
+        t.classList.toggle('active', t.textContent.includes(SOURCE_LABELS[src]));
+    });
+}
+
+async function load() {
+    try {
+        // 优先从 latest.json 加载
+        const r = await fetch('data/latest.json');
+        const d = await r.json();
+        allNews = d.news || [];
+    } catch (e) {
+        // fallback: 尝试 direct API
+        try {
+            const r = await fetch('https://www.lanjinger.com/', {
+                headers: {'User-Agent': 'Mozilla/5.0'}
+            });
+            // 降级: 只显示蓝鲸
+            allNews = [];
+        } catch (e2) {
+            allNews = [];
+        }
+    }
+
+    if (allNews.length === 0) {
+        document.getElementById('news-list').innerHTML = '<div class="empty">暂无可用资讯，请检查网络连接</div>';
+        return;
+    }
+
+    const counts = {};
+    allNews.forEach(n => {
+        const k = getSourceKey(n.title, n.source);
+        counts[k] = (counts[k] || 0) + 1;
+    });
+
+    renderStats(allNews);
+    renderTabs(counts);
+    renderNewsList(allNews);
+    document.getElementById('meta').textContent = `共 ${allNews.length} 条 · ${new Date().toLocaleTimeString('zh')} 更新`;
+}
+
+load();
+</script>
+</body>
+</html>

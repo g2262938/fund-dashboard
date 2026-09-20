@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-07-06T20:36:10.551471",
+  "source": "东方财富 十大股东公告(ak.stock_gdfx_top_10_em)",
+  "latest_period": "20260331",
+  "prev_period": "20251231",
+  "holdings": [],
+  "changes": [],
+  "stats": {
+    "total_stocks": 0,
+    "new_stocks": 0,
+    "increased": 0,
+    "decreased": 0,
+    "exited": 0,
+    "total_holders": 0,
+    "scan_duration_sec": 714
+  }
+}

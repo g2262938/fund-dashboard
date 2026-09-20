@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>历史快照 · 日期查看</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --ef-blue: #005096;
+    --ef-blue-dark: #003d75;
+    --ef-blue-light: #1a6cb8;
+    --ef-blue-pale: #e6f3fb;
+    --bg-base: #ffffff;
+    --bg-soft: #f4f7f8;
+    --bg-side: #0a1929;
+    --bg-side-2: #112a45;
+    --bg-hover: #1d4068;
+    --border: #e1e8ed;
+    --text-primary: #1a2332;
+    --text-secondary: #5a6b7d;
+    --text-dim: #8b95a3;
+    --text-light: #e6edf3;
+    --text-light-dim: #94a3b8;
+    --up: #e63946;
+    --up-bg: rgba(230, 57, 70, 0.08);
+    --down: #16a34a;
+    --down-bg: rgba(22, 163, 74, 0.08);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+}
+.mono { font-family: "SF Mono", "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; }
+
+.layout { display: flex; min-height: 100vh; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 240px;
+    background: var(--bg-side);
+    background-image: linear-gradient(180deg, var(--bg-side) 0%, #0d2540 100%);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+}
+.brand {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 12px;
+}
+.brand-logo {
+    width: 36px; height: 36px;
+    background: var(--ef-blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: #fff;
+}
+.brand-text .name { font-size: 15px; font-weight: 600; color: #fff; }
+.brand-text .name span { color: #ffd966; }
+.brand-text .tag { font-size: 9px; color: var(--text-light-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+
+.nav { flex: 1; padding: 16px 0; }
+.nav-section {
+    padding: 8px 20px 6px; font-size: 10px; font-weight: 600;
+    color: var(--text-light-dim); letter-spacing: 1.5px; text-transform: uppercase;
+}
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; color: var(--text-light-dim);
+    text-decoration: none; font-size: 13px;
+    border-left: 3px solid transparent; cursor: pointer; transition: all 0.15s;
+}
+.nav-item:hover { background: var(--bg-hover); color: var(--text-light); }
+.nav-item.active { background: var(--bg-side-2); color: #fff; border-left-color: var(--ef-blue); font-weight: 600; }
+.nav-item .icon { width: 18px; text-align: center; }
+
+/* ===== Main ===== */
+.main { flex: 1; padding: 24px 32px; max-width: 1200px; }
+.page-header {
+    border-bottom: 3px solid var(--ef-blue);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+}
+h1 { font-size: 22px; color: var(--ef-blue-dark); }
+.subtitle { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ===== Date Picker ===== */
+.date-picker {
+    background: var(--ef-blue-pale);
+    border: 1px solid var(--ef-blue-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.date-picker-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ef-blue-dark);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+}
+.date-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.date-select {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid var(--ef-blue-light);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.snapshot-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+.snapshot-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+.snapshot-item:hover { background: var(--ef-blue-pale); }
+.snapshot-item.active { background: var(--ef-blue-light); color: #fff; }
+.snapshot-item:last-child { border-bottom: none; }
+.snapshot-time { font-family: "SF Mono", monospace; color: var(--text-dim); }
+.snapshot-item.active .snapshot-time { color: #fff; }
+
+.btn {
+    padding: 10px 20px;
+    background: var(--ef-blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+.btn:hover { background: var(--ef-blue-dark); }
+.btn.outline { background: #fff; color: var(--ef-blue); border: 1px solid var(--ef-blue); }
+.btn.outline:hover { background: var(--ef-blue-pale); }
+
+/* ===== Snapshot Display ===== */
+.snapshot-info {
+    background: #fef9c3;
+    border-left: 3px solid #f59e0b;
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+/* ===== Reuse dashboard styles ===== */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 28px 0 14px;
+}
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--ef-blue);
+    border-radius: 2px;
+}
+.section-title .badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    background: var(--ef-blue-pale);
+    color: var(--ef-blue);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.card {
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+.metric {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    position: relative;
+}
+.metric .name {
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.metric .value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.metric .change {
+    display: inline-flex;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.metric .change.up { color: var(--up); background: var(--up-bg); }
+.metric .change.down { color: var(--down); background: var(--down-bg); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 11px;
+    text-transform: uppercase;
+    background: var(--ef-blue);
+    border: none;
+}
+.data-table tbody td {
+    padding: 13px 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+}
+.data-table tbody tr:nth-child(even) td { background: var(--bg-soft); }
+.data-table tbody tr:hover td { background: var(--ef-blue-pale); }
+.data-table .name-cell { font-weight: 600; }
+.data-table .code-cell { color: var(--text-dim); font-size: 11px; }
+.data-table .sector-cell { color: var(--text-secondary); font-size: 12px; }
+.data-table .change-up { color: var(--up); font-weight: 700; }
+.data-table .change-down { color: var(--down); font-weight: 700; }
+
+.card-padded { padding: 22px 24px; }
+.report-content {
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.7;
+}
+.report-content h3 {
+    font-size: 12px;
+    color: var(--ef-blue);
+    text-transform: uppercase;
+    margin: 16px 0 10px;
+    font-weight: 700;
+}
+.report-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.report-content table th,
+.report-content table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.report-content table th {
+    color: #fff; font-size: 11px; text-transform: uppercase;
+    background: var(--ef-blue);
+}
+.report-content .summary {
+    padding: 12px 16px;
+    background: var(--ef-blue-pale);
+    border-left: 3px solid var(--ef-blue);
+    border-radius: 0 4px 4px 0;
+    margin: 12px 0;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* ===== Top Menu Bar ===== */
+.top-menu {
+    background: #fff;
+    border-bottom: 2px solid var(--ef-blue);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 0 rgba(0,80,150,0.1);
+}
+.btn-back {
+    padding: 6px 14px;
+    background: var(--ef-blue);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+.btn-back:hover { background: var(--ef-blue-dark); }
+.top-menu .page-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.top-menu .meta {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: "SF Mono", monospace;
+}
+.layout { display: block; }
+.main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+
+footer {
+    margin-top: 48px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 11px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- 顶部菜单栏 -->
+    <header class="top-menu">
+        <a href="menu.html" class="btn-back">← 返回菜单</a>
+        <div class="page-title">📅 历史快照 · 日期查看</div>
+        <div class="meta">查看任意时刻的仪表板快照 · 数据每 15 分钟自动保存</div>
+    </header>
+
+    <main class="main">
+        <div class="page-header" style="display:none;">
+            <div>
+                <h1>📅 历史快照 · 日期查看</h1>
+                <div class="subtitle">查看任意时刻的仪表板快照 · 数据每 15 分钟自动保存</div>
+            </div>
+        </div>
+
+        <div class="date-picker">
+            <div class="date-picker-title">🗓️ 选择日期</div>
+            <div class="date-controls">
+                <select id="date-select" class="date-select">
+                    <option value="">加载中...</option>
+                </select>
+                <button class="btn" onclick="loadLatest()">最新快照</button>
+                <button class="btn outline" onclick="loadDate()">查看该日</button>
+            </div>
+            <div id="snapshot-list" class="snapshot-list" style="margin-top: 12px;"></div>
+        </div>
+
+        <div id="snapshot-info" class="snapshot-info" style="display:none;">
+            📌 当前查看:<span id="snapshot-time"></span> · <span id="snapshot-source"></span>
+        </div>
+
+        <div id="snapshot-content">
+            <div class="empty">👆 请选择日期或点击"最新快照"加载数据</div>
+        </div>
+
+        <footer>
+            小龙虾接盘系统 · 历史快照查看 · 数据保留 7 天
+        </footer>
+    </main>
+</div>
+
+<script>
+const DATA_DIR = 'data';
+const HOLDINGS_FILE = 'data/holdings.json';
+
+async function loadSnapshotIndex() {
+    try {
+        const r = await fetch('data/snapshots_index.json');
+        const idx = await r.json();
+        const select = document.getElementById('date-select');
+        select.innerHTML = '<option value="">选择日期 (' + idx.dates.length + ' 天)</option>';
+        idx.dates.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d + ' (' + idx.by_date[d].length + ' 个快照)';
+            select.appendChild(opt);
+        });
+        // 默认显示今天的快照列表
+        if (idx.dates.length > 0) {
+            showSnapshotList(idx.dates[0]);
+        }
+    } catch (e) {
+        document.getElementById('date-select').innerHTML = '<option value="">索引加载失败</option>';
+        console.error(e);
+    }
+}
+
+function showSnapshotList(date) {
+    const listEl = document.getElementById('snapshot-list');
+    fetch('data/snapshots_index.json').then(r => r.json()).then(idx => {
+        const snaps = idx.by_date[date] || [];
+        listEl.innerHTML = snaps.map(s =>
+            `<div class="snapshot-item" data-file="${s.file}" onclick="loadSnapshot('${date}', '${s.file}')">
+                <span>🕐 快照 #${s.file.split('-')[1].replace('.json', '')}</span>
+                <span class="snapshot-time">${s.time}</span>
+            </div>`
+        ).join('');
+    });
+}
+
+async function loadSnapshot(date, filename) {
+    document.querySelectorAll('.snapshot-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[data-file="${filename}"]`)?.classList.add('active');
+
+    try {
+        const r = await fetch(`history/${filename}`);
+        const data = await r.json();
+        renderSnapshot(data, `${date} ${filename.split('-')[1].replace('.json', '')}`);
+    } catch (e) {
+        alert('快照加载失败: ' + e);
+    }
+}
+
+async function loadLatest() {
+    try {
+        const r = await fetch('data/latest.json');
+        const data = await r.json();
+        renderSnapshot(data, data.generated_at);
+    } catch (e) {
+        alert('加载失败: ' + e);
+    }
+}
+
+async function loadDate() {
+    const date = document.getElementById('date-select').value;
+    if (!date) {
+        alert('请先选择日期');
+        return;
+    }
+    showSnapshotList(date);
+    // 自动加载该日最新快照
+    const idx = await fetch('data/snapshots_index.json').then(r => r.json());
+    const snaps = idx.by_date[date];
+    if (snaps && snaps.length > 0) {
+        loadSnapshot(date, snaps[0].file);
+    }
+}
+
+function renderSnapshot(data, timestamp) {
+    document.getElementById('snapshot-info').style.display = 'block';
+    document.getElementById('snapshot-time').textContent = timestamp || '';
+    document.getElementById('snapshot-source').textContent = data.source || '快照数据';
+
+    let html = '';
+
+    // 选股
+    if (data.picks && data.picks.content) {
+        html += renderPicks(data.picks);
+    }
+    // 持仓
+    if (data.holdings && data.holdings.length > 0) {
+        html += renderHoldings(data.holdings);
+    }
+    // 复盘
+    if (data.review && data.review.content) {
+        html += renderReview(data.review);
+    }
+    // 监控
+    if (data.monitor_status && data.monitor_status.length > 0) {
+        html += renderMonitor(data.monitor_status);
+    }
+    // A股指数
+    if (data.indices && data.indices.length > 0) {
+        html += renderIndices('A 股宽基指数', data.indices, data.indices.length + ' 只');
+    }
+    // 美股
+    if (data.us && data.us.length > 0) {
+        html += renderIndices('美股三大指数', data.us, '前一日收盘');
+    }
+
+    document.getElementById('snapshot-content').innerHTML = html || '<div class="empty">该快照为空</div>';
+}
+
+function renderMetricCard(d) {
+    const pct = d.change_pct || 0;
+    const cls = pct > 0 ? 'up' : pct < 0 ? 'down' : '';
+    const arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '—';
+    const sign = pct > 0 ? '+' : '';
+    return `<div class="metric">
+        <div class="name">${d.name}</div>
+        <div class="value mono">${d.current.toLocaleString('zh', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+        <div class="change ${cls} mono">${arrow} ${sign}${pct.toFixed(2)}%</div>
+    </div>`;
+}
+
+function renderIndices(title, list, badge) {
+    return `<div class="section-title">${title}<span class="badge">${badge}</span></div>
+    <div class="grid">${list.map(renderMetricCard).join('')}</div>`;
+}
+
+function renderHoldings(list) {
+    const rows = list.map(h => {
+        const code = h.code + (h.market === 'HK' ? '.HK' : '');
+        const cp = h.change_pct || 0;
+        const cls = cp > 0 ? 'change-up' : 'change-down';
+        const cur = h.current ? h.current.toFixed(2) : '-';
+        return `<tr>
+            <td class="name-cell">${h.name}</td>
+            <td class="code-cell mono">${code}</td>
+            <td class="mono">${cur}</td>
+            <td class="${cls} mono">${cp >= 0 ? '+' : ''}${cp.toFixed(2)}%</td>
+            <td class="sector-cell">${h.sector || '-'}</td>
+        </tr>`;
+    }).join('');
+    return `<div class="section-title">当前持仓<span class="badge">${list.length} 只</span></div>
+    <div class="card"><table class="data-table">
+        <thead><tr><th>名称</th><th>代码</th><th>现价</th><th>涨跌</th><th>板块</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function renderMonitor(list) {
+    const rows = list.map(m => `<tr>
+        <td class="name-cell">${m.name}</td>
+        <td class="code-cell mono">${m.freq}</td>
+        <td><span class="badge" style="background:var(--down-bg);color:var(--down);padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;">${m.status}</span></td>
+        <td class="sector-cell mono">${m.last_push}</td>
+    </tr>`).join('');
+    return `<div class="section-title">监控系统<span class="badge">${list.length} 项运行中</span></div>
+    <div class="card"><table class="data-table">
+        <thead><tr><th>监控项</th><th>频率</th><th>状态</th><th>最近推送</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function renderPicks(picks) {
+    const content = picks.content || '';
+    return `<div class="section-title">今日选股<span class="badge">${picks.date || ''}</span></div>
+    <div class="card"><div class="card-padded report-content">${renderMarkdown(content)}</div></div>`;
+}
+
+function renderReview(review) {
+    return `<div class="section-title">盘后复盘<span class="badge">${review.date || ''}</span></div>
+    <div class="card"><div class="card-padded report-content">${renderMarkdown(review.content || '')}</div></div>`;
+}
+
+// 简易 markdown 渲染(表格 → HTML)
+function renderMarkdown(text) {
+    const lines = text.split('\n');
+    let out = '';
+    let inTable = false;
+    let tableRows = [];
+    function flushTable() {
+        if (tableRows.length > 1) {
+            const header = tableRows[0];
+            const body = tableRows.slice(1).filter(r => r.some(c => c && !c.match(/^-+$/)));
+            out += '<table class="data-table"><thead><tr>' +
+                header.map(c => `<th>${c}</th>`).join('') +
+                '</tr></thead><tbody>' +
+                body.map(r => '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') +
+                '</tbody></table>';
+        }
+        tableRows = [];
+    }
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+            const cells = trimmed.slice(1, -1).split('|').map(c => c.trim());
+            tableRows.push(cells);
+            inTable = true;
+            continue;
+        }
+        if (inTable) { flushTable(); inTable = false; }
+        if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
+            out += `<h3>${trimmed.replace(/^#+\s*/, '')}</h3>`;
+        } else if (trimmed.includes('总结')) {
+            out += `<div class="summary">${trimmed}</div>`;
+        } else if (trimmed) {
+            out += `<p style="margin: 6px 0; color: var(--text-secondary);">${trimmed}</p>`;
+        }
+    }
+    flushTable();
+    return out || '<div class="empty">内容为空</div>';
+}
+
+// 初始化
+loadSnapshotIndex();
+</script>
+
+</body>
+</html>

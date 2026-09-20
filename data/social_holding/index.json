@@ -1,0 +1,27 @@
+[
+  {
+    "date": "2026-07-05",
+    "file": "social_holding_2026-07-05.json",
+    "stats": {
+      "total_stocks": 627,
+      "new_stocks": 186,
+      "increased": 166,
+      "decreased": 182,
+      "exited": 151,
+      "total_holders": 781
+    }
+  },
+  {
+    "date": "2026-07-06",
+    "file": "social_holding_2026-07-06.json",
+    "stats": {
+      "total_stocks": 187,
+      "new_stocks": 43,
+      "increased": 61,
+      "decreased": 58,
+      "exited": 25,
+      "total_holders": 245,
+      "scan_duration_sec": 107
+    }
+  }
+]

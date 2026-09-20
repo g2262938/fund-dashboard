@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回测报告 — simple_picker v4.1</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+       background: #ffffff; color: #1a2332; padding: 32px; min-height: 100vh; }
+.container { max-width: 1100px; margin: 0 auto; }
+header { border-bottom: 3px solid #005096; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 22px; color: #003d75; }
+.subtitle { font-size: 12px; color: #5a6b7d; margin-top: 6px; }
+
+.alert { padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.7; }
+.alert.danger { background: #fff0f0; border-left: 4px solid #d93025; color: #5a0a0a; }
+.alert.success { background: #f0fdf4; border-left: 4px solid #16a34a; color: #14532d; }
+.alert.warning { background: #fefce8; border-left: 4px solid #ca8a04; color: #713f12; }
+
+.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.metric { background: #e6f3fb; border-radius: 8px; padding: 16px; text-align: center; }
+.metric-value { font-size: 28px; font-weight: 700; color: #003d75; }
+.metric-label { font-size: 12px; color: #5a6b7d; margin-top: 4px; }
+
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+th { background: #005096; color: white; padding: 10px 8px; text-align: left; }
+td { padding: 10px 8px; border-bottom: 1px solid #e1e8ed; }
+.mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-good { background: #f0fdf4; color: #16a34a; }
+.tag-bad { background: #fff0f0; color: #d93025; }
+.tag-neutral { background: #f8fafc; color: #64748b; }
+
+.bar { height: 8px; background: #e1e8ed; border-radius: 4px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; background: #005096; transition: width 0.3s; }
+.bar-fill.good { background: #16a34a; }
+.bar-fill.bad { background: #d93025; }
+.bar-fill.warn { background: #ca8a04; }
+
+.modes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+.mode-card { background: white; border: 2px solid #e1e8ed; border-radius: 12px; padding: 18px; }
+.mode-card.strong { border-color: #16a34a; }
+.mode-card.steady { border-color: #ca8a04; }
+.mode-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.mode-title.strong { color: #16a34a; }
+.mode-title.steady { color: #ca8a04; }
+
+.exit-bar { margin: 8px 0; }
+.exit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+.exit-name { flex: 1; color: #5a6b7d; }
+.exit-count { font-weight: 600; color: #1a2332; }
+
+.back-link { display: inline-block; padding: 8px 16px; background: #005096; color: white; border-radius: 6px;
+             text-decoration: none; font-size: 13px; margin-bottom: 20px; }
+.back-link:hover { background: #003d75; }
+
+h2 { font-size: 16px; color: #003d75; margin: 24px 0 12px 0; border-left: 3px solid #005096; padding-left: 10px; }
+
+.diagnosis { background: #fefce8; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px; margin-top: 20px; }
+.diagnosis h3 { color: #713f12; font-size: 14px; margin-bottom: 10px; }
+.diagnosis li { margin-left: 20px; margin-bottom: 6px; font-size: 13px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="container">
+    <a href="menu.html" class="back-link">← 返回菜单</a>
+
+    <header>
+        <h1>📊 策略回测报告 — simple_picker v4.1</h1>
+        <div class="subtitle">回测窗口: <span id="window"></span> · 样本: <span id="samples"></span> 笔交易</div>
+    </header>
+
+    <div class="alert danger">
+        <strong>🚨 回测结论: 当前策略 v4.1 期望为负 (-2.21%)</strong><br>
+        胜率 27.6% 偏低, 盈亏比 1.5 尚可。需要提高选股精度或调宽止损线。<br>
+        <span id="conclusion" style="font-style: italic; color: #666;"></span>
+    </div>
+
+    <h2>📈 关键指标</h2>
+    <div class="metric-grid">
+        <div class="metric">
+            <div class="metric-value" id="win_rate">--</div>
+            <div class="metric-label">总胜率</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" id="total_pnl">--</div>
+            <div class="metric-label">平均收益</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" id="total_trades">--</div>
+            <div class="metric-label">总样本数</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value" id="stop_loss_pct">--</div>
+            <div class="metric-label">止损触发占比</div>
+        </div>
+    </div>
+
+    <h2>🎯 按模式分组</h2>
+    <div class="modes-grid">
+        <div class="mode-card strong" id="strong_card">
+            <div class="mode-title strong">🟢 强势模式</div>
+            <div id="strong_content"></div>
+        </div>
+        <div class="mode-card steady" id="steady_card">
+            <div class="mode-title steady">🟡 稳健模式</div>
+            <div id="steady_content"></div>
+        </div>
+    </div>
+
+    <h2>📊 退出原因分布</h2>
+    <div class="mode-card">
+        <div id="exit_dist"></div>
+    </div>
+
+    <h2>🏆 最佳 5 笔 vs 💔 最差 5 笔</h2>
+    <table>
+        <thead>
+            <tr><th>类型</th><th>名称</th><th>代码</th><th>入场</th><th class="mono">收益</th></tr>
+        </thead>
+        <tbody id="trades_table"></tbody>
+    </table>
+
+    <h2>🔧 优化建议 (基于回测结果)</h2>
+    <div class="diagnosis">
+        <h3>📌 问题诊断</h3>
+        <ul>
+            <li><strong>胜率仅 27.6%</strong>:3 笔交易中只有 1 笔盈利，需要更精准的选股信号</li>
+            <li><strong>60% 交易被硬止损</strong>(-7%):回测期间这些股票"看起来很强"但次日就开始跌，说明打分过度依赖历史动量</li>
+            <li><strong>盈利平均 +9%</strong>:赚钱时赚得不少，但触发频率太低</li>
+            <li><strong>盈亏比 1.5</strong>:这意味着只要胜率提升到 40%，策略就盈利</li>
+        </ul>
+
+        <h3 style="margin-top: 14px;">💡 下一步调整方向</h3>
+        <ul>
+            <li><strong>方案A：提高选股门槛</strong>：把 🟡 稳健 从 ≥75 提到 ≥82，减少被硬止损的次数</li>
+            <li><strong>方案B：加入"首次回踩"</strong>：不追涨当天涨 5% 以上的股票，等回踩5日均线再买</li>
+            <li><strong>方案C：放宽止损</strong>：把 -7% 改为 -10%，让波动率高的票有喘息空间</li>
+            <li><strong>方案D：加入大盘过滤</strong>：上证指数连跌 3 日时暂停新买入</li>
+            <li><strong>方案E：评分模型改用"当日涨跌幅 < 3%"作为前提</strong>：剔除"今日暴涨" 的伪强势</li>
+        </ul>
+
+        <p style="margin-top: 12px; font-size: 12px; color: #92400e;">
+            📊 <strong>本次回测局限性</strong>：仅用最近 20 个交易日数据，应跑更长周期 (60+日) 才能形成可靠结论。<br>
+            🚧 <strong>建议</strong>：未来每次策略修改后跑一次 30-60 日回测，对比胜率变化。
+        </p>
+    </div>
+</div>
+
+<script>
+async function loadReport() {
+    try {
+        const r = await fetch('backtest_report.json');
+        const d = await r.json();
+        render(d);
+    } catch (e) {
+        document.body.innerHTML += '<p style="color:red;margin-top:20px;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+function render(d) {
+    document.getElementById('window').innerText = d.backtest_window || '-';
+    document.getElementById('samples').innerText = d.total_trades || '-';
+    document.getElementById('conclusion').innerText = d['结论'] || '';
+
+    const o = d.overall;
+    document.getElementById('win_rate').innerText = o.win_rate.toFixed(1) + '%';
+    document.getElementById('total_pnl').innerHTML = formatPnl(o.avg_pnl);
+    document.getElementById('total_trades').innerText = d.total_trades;
+    const stopLossPct = (o.stop_loss_triggered / d.total_trades * 100).toFixed(1);
+    document.getElementById('stop_loss_pct').innerText = stopLossPct + '%';
+
+    // 模式分组
+    renderMode('strong_content', d.summary['🟢 强势'], '🟢');
+    renderMode('steady_content', d.summary['🟡 稳健'], '🟡');
+
+    // 退出原因
+    const exits = d.exit_reason_dist || {};
+    const total = Object.values(exits).reduce((a,b)=>a+b, 0);
+    let html = '';
+    for (const [k, v] of Object.entries(exits).sort((a,b)=>b[1]-a[1])) {
+        const pct = v / total * 100;
+        html += `<div class="exit-row">
+            <span class="exit-name">${k}</span>
+            <span class="bar" style="flex: 2; margin: 0 12px;">
+                <span class="bar-fill ${pct > 30 ? 'bad' : pct > 15 ? 'warn' : 'good'}" style="width: ${pct}%"></span>
+            </span>
+            <span class="exit-count">${v} (${pct.toFixed(0)}%)</span>
+        </div>`;
+    }
+    document.getElementById('exit_dist').innerHTML = html;
+
+    // 最佳/最差交易表
+    let tradeRows = '';
+    const allTrades = [];
+    if (d.summary['🟢 强势']) allTrades.push(...d.summary['🟢 强势'].top3.map(t => ({...t, mode: '🟢'})));
+    if (d.summary['🟡 稳健']) allTrades.push(...d.summary['🟡 稳健'].top3.map(t => ({...t, mode: '🟡'})));
+    // 按收益排序
+    const wins = [...allTrades].sort((a,b)=>b.pnl-a.pnl).slice(0, 3);
+    const losses = [...allTrades].sort((a,b)=>a.pnl-b.pnl).slice(0, 3);
+    wins.forEach(t => tradeRows += rowHtml(t, '🏆 Top', 'good'));
+    losses.forEach(t => tradeRows += rowHtml(t, '💔 Worst', 'bad'));
+    document.getElementById('trades_table').innerHTML = tradeRows;
+}
+
+function renderMode(id, s, tag) {
+    if (!s) { document.getElementById(id).innerHTML = '无数据'; return; }
+    const html = `
+        <table>
+            <tr><td>样本数</td><td class="mono">${s.count}</td></tr>
+            <tr><td>胜率</td><td>${s.win_rate.toFixed(1)}% (${s.wins}胜/${s.losses}负)</td></tr>
+            <tr><td>平均盈利</td><td class="mono">+${s.avg_win.toFixed(2)}%</td></tr>
+            <tr><td>平均亏损</td><td class="mono">${s.avg_loss.toFixed(2)}%</td></tr>
+            <tr><td>盈亏比</td><td class="mono">${s.profit_loss_ratio.toFixed(2)}</td></tr>
+            <tr><td>单笔平均</td><td class="mono">${formatPnl(s.avg_pnl)}</td></tr>
+            <tr><td>最大盈利</td><td class="mono">+${s.max_win.toFixed(2)}%</td></tr>
+            <tr><td>最大亏损</td><td class="mono">${s.max_loss.toFixed(2)}%</td></tr>
+        </table>
+        <div style="margin-top:10px;">
+            <strong>最佳3笔:</strong>
+            <table>
+                ${s.top3.map(t => `
+                    <tr>
+                        <td>${t.name}</td>
+                        <td class="mono">${t.code}</td>
+                        <td class="mono">${t.entry}</td>
+                        <td class="mono" style="color: #16a34a; font-weight: 600;">+${t.pnl.toFixed(2)}%</td>
+                    </tr>
+                `).join('')}
+            </table>
+        </div>
+    `;
+    document.getElementById(id).innerHTML = html;
+}
+
+function rowHtml(t, label, cls) {
+    return `<tr>
+        <td><span class="tag tag-${cls === 'good' ? 'good' : 'bad'}">${label}</span> ${t.mode || ''}</td>
+        <td>${t.name}</td>
+        <td class="mono">${t.code}</td>
+        <td>${t.entry}</td>
+        <td class="mono" style="color: ${t.pnl > 0 ? '#16a34a' : '#d93025'}; font-weight: 600;">${t.pnl > 0 ? '+' : ''}${t.pnl.toFixed(2)}%</td>
+    </tr>`;
+}
+
+function formatPnl(v) { return v > 0 ? `<span style="color:#16a34a">+${v.toFixed(2)}%</span>` : `<span style="color:#d93025">${v.toFixed(2)}%</span>`; }
+
+loadReport();
+</script>
+</body>
+</html>

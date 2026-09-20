@@ -1,0 +1,57 @@
+{
+  "updated_at": "2026-08-24 11:09",
+  "total": 4,
+  "artists": [
+    "周杰伦"
+  ],
+  "tickets": [
+    {
+      "artist": "周杰伦",
+      "name": "周杰伦 2026/2027 世界巡回演唱会",
+      "date": "2026-10-17",
+      "location": "澳大利亚 墨尔本",
+      "venue": "Marvel Stadium",
+      "price": "待定",
+      "url": "https://www.songkick.com/search?query=Jay+Chou+concert+2026",
+      "source": "Songkick",
+      "status": "即将开票",
+      "urgency": "future"
+    },
+    {
+      "artist": "周杰伦",
+      "name": "周杰伦 2026/2027 世界巡回演唱会 - 新加坡",
+      "date": "2027-01-08",
+      "location": "新加坡",
+      "venue": "Singapore National Stadium",
+      "price": "待定",
+      "url": "https://www.songkick.com/search?query=Jay+Chou+concert+2026",
+      "source": "Songkick",
+      "status": "即将开票",
+      "urgency": "future"
+    },
+    {
+      "artist": "周杰伦",
+      "name": "周杰伦 2026/2027 世界巡回演唱会 - 新加坡",
+      "date": "2027-01-09",
+      "location": "新加坡",
+      "venue": "Singapore National Stadium",
+      "price": "待定",
+      "url": "https://www.songkick.com/search?query=Jay+Chou+concert+2026",
+      "source": "Songkick",
+      "status": "即将开票",
+      "urgency": "future"
+    },
+    {
+      "artist": "周杰伦",
+      "name": "周杰伦 2026/2027 世界巡回演唱会 - 新加坡",
+      "date": "2027-01-10",
+      "location": "新加坡",
+      "venue": "Singapore National Stadium",
+      "price": "待定",
+      "url": "https://www.songkick.com/search?query=Jay+Chou+concert+2026",
+      "source": "Songkick",
+      "status": "即将开票",
+      "urgency": "future"
+    }
+  ]
+}

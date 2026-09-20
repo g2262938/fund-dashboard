@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票仪表板 · {{DATE}}</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== 易方达配色(白底 + 深蓝 + 浅蓝辅色) ===== */
+:root {
+    --ef-blue: #005096;
+    --ef-blue-dark: #003d75;
+    --ef-blue-light: #1a6cb8;
+    --ef-blue-pale: #e6f3fb;
+
+    --bg-base: #ffffff;
+    --bg-soft: #f4f7f8;
+    --bg-card: #ffffff;
+    --bg-row-alt: #f8fafd;
+    --bg-hover: #eef6fc;
+
+    --border: #e1e8ed;
+
+    --text-primary: #1a2332;
+    --text-secondary: #5a6b7d;
+    --text-dim: #8b95a3;
+
+    --up: #e63946;
+    --up-bg: rgba(230, 57, 70, 0.08);
+    --down: #16a34a;
+    --down-bg: rgba(22, 163, 74, 0.08);
+    --flat: #8b95a3;
+
+    --accent: #f59e0b;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+    font-family: "SF Mono", "JetBrains Mono", "Roboto Mono", "Menlo", monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== 顶部品牌条 ===== */
+.brand-bar {
+    background: linear-gradient(90deg, var(--ef-blue-dark) 0%, var(--ef-blue) 100%);
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 0 rgba(0, 80, 150, 0.1), 0 2px 8px rgba(0, 80, 150, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo {
+    width: 36px; height: 36px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ef-blue);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
+}
+.brand-text .name {
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+.brand-text .name span { color: #ffd966; font-weight: 700; }
+.brand-text .tag {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+.brand-right { display: flex; align-items: center; gap: 14px; }
+
+/* 日期选择器 */
+.date-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 4px 4px 4px 12px;
+}
+.date-picker label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+.date-picker select {
+    background: transparent;
+    color: #fff;
+    border: none;
+    padding: 5px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: "SF Mono", monospace;
+    font-weight: 500;
+    outline: none;
+}
+.date-picker select option {
+    background: var(--ef-blue-dark);
+    color: #fff;
+}
+.date-picker select option:checked {
+    background: var(--ef-blue);
+}
+
+.brand-time {
+    font-family: "SF Mono", monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.3px;
+}
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    font-size: 11px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.live-dot {
+    width: 6px; height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #4ade80;
+    animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* 当前查看的快照时间提示 */
+.snapshot-banner {
+    background: #fef9c3;
+    border-left: 3px solid var(--accent);
+    color: #1a2332;
+    padding: 8px 16px;
+    font-size: 12px;
+    margin: 0;
+    display: none;
+    align-items: center;
+    gap: 12px;
+}
+.snapshot-banner.show { display: flex; }
+.snapshot-banner .btn-back {
+    margin-left: auto;
+    padding: 4px 12px;
+    background: var(--ef-blue);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+.snapshot-banner .btn-back:hover { background: var(--ef-blue-dark); }
+
+.container { max-width: 1320px; margin: 0 auto; padding: 28px 32px; }
+
+/* ===== Section Title ===== */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 28px 0 14px;
+}
+.section-title:first-child { margin-top: 14px; }
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--ef-blue);
+    border-radius: 2px;
+}
+.section-title .badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    background: var(--ef-blue-pale);
+    color: var(--ef-blue);
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* ===== Card ===== */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ===== Metric Grid ===== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+.metric {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+}
+.metric::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background 0.18s ease;
+}
+.metric:hover {
+    border-color: var(--ef-blue);
+    box-shadow: 0 4px 12px rgba(0, 80, 150, 0.08);
+    transform: translateY(-1px);
+}
+.metric:hover::after { background: var(--ef-blue); }
+.metric.up::after { background: var(--up); }
+.metric.down::after { background: var(--down); }
+
+.metric .name {
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.metric .value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+.metric .change {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.metric .change.up { color: var(--up); background: var(--up-bg); }
+.metric .change.down { color: var(--down); background: var(--down-bg); }
+.metric .change.flat { color: var(--flat); background: rgba(139, 149, 163, 0.08); }
+
+/* ===== Table ===== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.data-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    background: var(--ef-blue);
+    border: none;
+}
+.data-table tbody td {
+    padding: 13px 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+}
+.data-table tbody tr:nth-child(even) td { background: var(--bg-row-alt); }
+.data-table tbody tr:hover td { background: var(--bg-hover); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table .name-cell { font-weight: 600; color: var(--text-primary); }
+.data-table .code-cell { color: var(--text-dim); font-size: 11px; }
+.data-table .sector-cell { color: var(--text-secondary); font-size: 12px; }
+.data-table .change-up { color: var(--up); font-weight: 700; }
+.data-table .change-down { color: var(--down); font-weight: 700; }
+
+/* ===== Badges ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.badge-active {
+    background: var(--down-bg);
+    color: var(--down);
+    border: 1px solid rgba(22, 163, 74, 0.25);
+}
+.badge-active::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--down);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+/* ===== Report Content ===== */
+.card-padded { padding: 22px 24px; }
+.report-content {
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.7;
+}
+.report-content h3 {
+    font-size: 12px;
+    color: var(--ef-blue);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 16px 0 10px;
+    font-weight: 700;
+}
+.report-content h3:first-child { margin-top: 0; }
+.report-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+}
+.report-content table th,
+.report-content table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+.report-content table th {
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--ef-blue);
+}
+.report-content table td { color: var(--text-primary); }
+.report-content .summary {
+    padding: 12px 16px;
+    background: var(--ef-blue-pale);
+    border-left: 3px solid var(--ef-blue);
+    border-radius: 0 4px 4px 0;
+    margin: 12px 0;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ===== Empty ===== */
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* ===== Footer ===== */
+footer {
+    margin-top: 48px;
+    padding: 20px 32px;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 11px;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+footer .footer-tag { color: var(--ef-blue); font-weight: 600; }
+
+/* ===== News Feed ===== */
+.news-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.news-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+    transition: background 0.15s;
+}
+.news-item:last-child { border-bottom: none; }
+.news-item:hover { background: var(--bg-hover); }
+.news-tag {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding-top: 1px;
+}
+.news-title {
+    flex: 1;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+.news-src {
+    flex-shrink: 0;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: "SF Mono", monospace;
+    white-space: nowrap;
+    padding-top: 2px;
+}
+
+@media (max-width: 640px) {
+    .brand-bar { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+    .container { padding: 16px; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .metric .value { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部品牌条(带日期选择) -->
+<div class="brand-bar">
+    <div class="brand">
+        <div class="brand-logo">EF</div>
+        <div class="brand-text">
+            <div class="name">智投<span>·</span>仪表板</div>
+            <div class="tag">{{DATE}} · SMART TRADING TERMINAL</div>
+        </div>
+    </div>
+    <div class="brand-right">
+        <div class="date-picker">
+            <label>📅</label>
+            <select id="date-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+        <div class="live-badge">
+            <span class="live-dot"></span>
+            <span id="live-text">LIVE</span>
+        </div>
+    </div>
+</div>
+
+<!-- 历史快照提示条 -->
+<div id="snapshot-banner" class="snapshot-banner">
+    <span>📌 当前查看历史快照:<span id="banner-time"></span></span>
+    <span id="banner-source"></span>
+    <button class="btn-back" onclick="loadLatest()">↩ 返回最新</button>
+</div>
+
+<!-- 主内容区 -->
+<div class="container">
+    <div id="content-area">
+        <!-- 首次加载的占位,由 JS 渲染 -->
+        <div class="empty">加载中...</div>
+    </div>
+</div>
+
+<footer>
+    <span class="footer-tag">小龙虾接盘系统</span> · Hermes Agent · 数据源:腾讯财经 · 自动刷新于 {{REFRESH_TIME}}
+</footer>
+
+<script>
+// 全局数据(由模板在生成时注入一份)
+const INITIAL_DATA = {{INITIAL_DATA}};
+
+// 渲染函数
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function renderMetric(d) {
+    const pct = d.change_pct || 0;
+    let cls, arrow, sign, barCls;
+    if (pct > 0) { cls='up'; arrow='▲'; sign='+'; barCls='up'; }
+    else if (pct < 0) { cls='down'; arrow='▼'; sign=''; barCls='down'; }
+    else { cls='flat'; arrow='—'; sign=''; barCls=''; }
+    const num = (d.current || 0).toLocaleString('zh', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return `<div class="metric ${barCls}">
+        <div class="name">${escapeHtml(d.name)}</div>
+        <div class="value mono">${num}</div>
+        <div class="change ${cls} mono">${arrow} ${sign}${pct.toFixed(2)}%</div>
+    </div>`;
+}
+
+function renderIndices(title, list, badge) {
+    if (!list || list.length === 0) return '';
+    return `<div class="section-title">${title}<span class="badge">${badge}</span></div>
+    <div class="grid">${list.map(renderMetric).join('')}</div>`;
+}
+
+function renderHoldings(list) {
+    if (!list || list.length === 0) return '';
+    const rows = list.map(h => {
+        const code = h.code + (h.market === 'HK' ? '.HK' : '');
+        const cp = h.change_pct || 0;
+        const cls = cp > 0 ? 'change-up' : 'change-down';
+        const cur = h.current ? h.current.toFixed(2) : '-';
+        const prefix = h.market === 'HK' ? 'hk' : (String(h.code).startsWith('6') || String(h.code).startsWith('9') ? 'sh' : 'sz');
+        const link = `https://gu.qq.com/${prefix}${h.code}/gp`;
+        return `<tr>
+            <td class="name-cell"><a href="${link}" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;font-weight:600;">${escapeHtml(h.name)}</a></td>
+            <td class="code-cell mono">${escapeHtml(code)}</td>
+            <td class="mono">${cur}</td>
+            <td class="${cls} mono">${cp >= 0 ? '+' : ''}${cp.toFixed(2)}%</td>
+            <td class="sector-cell">${escapeHtml(h.sector || '-')}</td>
+        </tr>`;
+    }).join('');
+    return `<div class="section-title">当前持仓<span class="badge">${list.length} 只</span></div>
+    <div class="card"><table class="data-table">
+        <thead><tr><th>名称</th><th>代码</th><th>现价</th><th>涨跌</th><th>板块</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function renderMonitor(list) {
+    if (!list || list.length === 0) return '';
+    const rows = list.map(m => `<tr>
+        <td class="name-cell">${escapeHtml(m.name)}</td>
+        <td class="code-cell mono">${escapeHtml(m.freq)}</td>
+        <td><span class="badge badge-active">${escapeHtml(m.status)}</span></td>
+        <td class="sector-cell mono">${escapeHtml(m.last_push || '')}</td>
+    </tr>`).join('');
+    return `<div class="section-title">监控系统<span class="badge">${list.length} 项运行中</span></div>
+    <div class="card"><table class="data-table">
+        <thead><tr><th>监控项</th><th>频率</th><th>状态</th><th>最近推送</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function renderMdTable(tableRows) {
+    if (tableRows.length < 2) return '';
+    const header = tableRows[0];
+    const body = tableRows.slice(1).filter(r => r.some(c => c && !c.match(/^-+$/)));
+
+    // 找出"名称"列和"代码"列索引
+    const nameIdx = header.findIndex(h => /名称|股票|名字/.test(h));
+    const codeIdx = header.findIndex(h => /代码/.test(h));
+
+    return '<table class="data-table"><thead><tr>' +
+        header.map(c => `<th>${escapeHtml(c)}</th>`).join('') +
+        '</tr></thead><tbody>' +
+        body.map(r => '<tr>' + r.map((c, ci) => {
+            let cls = '';
+            if (c && c.includes('%')) {
+                if (c.startsWith('+') || (c.includes('+') && c.includes('%'))) cls = 'change-up';
+                else if (c.startsWith('-')) cls = 'change-down';
+            }
+            // 名称列 → 转链接
+            if (ci === nameIdx && c) {
+                const codeVal = codeIdx >= 0 ? (r[codeIdx] || '').trim() : '';
+                const prefix = codeVal.startsWith('6') || codeVal.startsWith('9') ? 'sh' : (codeVal ? 'sz' : '');
+                if (prefix && /^\d{6}$/.test(codeVal)) {
+                    return `<td class="name-cell"><a href="https://gu.qq.com/${prefix}${codeVal}/gp" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;font-weight:600;">${escapeHtml(c)}</a></td>`;
+                }
+            }
+            // 代码列 → 转链接(mono + ef-blue)
+            if (ci === codeIdx && /^\d{6}$/.test(c)) {
+                const prefix = c.startsWith('6') || c.startsWith('9') ? 'sh' : 'sz';
+                return `<td class="code-cell mono"><a href="https://gu.qq.com/${prefix}${c}/gp" target="_blank" rel="noopener" style="color:var(--ef-blue);text-decoration:none;">${escapeHtml(c)}</a></td>`;
+            }
+            return `<td class="${cls} mono">${escapeHtml(c)}</td>`;
+        }).join('') + '</tr>').join('') +
+        '</tbody></table>';
+}
+
+function renderMarkdownReport(text) {
+    if (!text) return '';
+    const lines = text.split('\n');
+    let out = '';
+    let tableRows = [];
+    function flush() {
+        if (tableRows.length > 0) {
+            out += renderMdTable(tableRows);
+            tableRows = [];
+        }
+    }
+    for (const line of lines) {
+        const t = line.trim();
+        if (t.startsWith('|') && t.endsWith('|')) {
+            tableRows.push(t.slice(1, -1).split('|').map(c => c.trim()));
+            continue;
+        }
+        flush();
+        if (!t) continue;
+        if (t.startsWith('##') || t.startsWith('#')) {
+            out += `<h3>${escapeHtml(t.replace(/^#+\s*/, ''))}</h3>`;
+        } else if (t.includes('总结') || t.includes('仅供参考')) {
+            out += `<div class="summary">${escapeHtml(t)}</div>`;
+        } else if (t.includes('━━━━')) {
+            // 分隔线跳过
+        } else if (t.match(/^[📊🕐📈📊]/)) {
+            out += `<h3>${escapeHtml(t)}</h3>`;
+        } else {
+            out += `<p style="margin: 6px 0; color: var(--text-secondary);">${escapeHtml(t)}</p>`;
+        }
+    }
+    flush();
+    return out;
+}
+
+function renderPicks(picks) {
+    if (!picks || !picks.content) return '';
+    return `<div class="section-title">今日选股<span class="badge">${escapeHtml(picks.date || '')}</span></div>
+    <div class="card"><div class="card-padded report-content">${renderMarkdownReport(picks.content)}</div></div>`;
+}
+
+function renderReview(review) {
+    if (!review || !review.content) return '';
+    return `<div class="section-title">盘后复盘<span class="badge">${escapeHtml(review.date || '')}</span></div>
+    <div class="card"><div class="card-padded report-content">${renderMarkdownReport(review.content)}</div></div>`;
+}
+
+function renderNews(news) {
+    if (!news || news.length === 0) return '';
+    const rows = news.map(n =>
+        `<div class="news-item">
+            <span class="news-tag">${escapeHtml(n.tag || '🚨')}</span>
+            <span class="news-title">${escapeHtml(n.title || '')}</span>
+            <span class="news-src">${escapeHtml(n.source || '')}</span>
+        </div>`
+    ).join('');
+    return `<div class="section-title">资讯监控 <span class="badge">${news.length} 条</span></div>
+    <div class="card"><div class="news-feed">${rows}</div></div>`;
+}
+
+function renderData(data) {
+    return [
+        renderPicks(data.picks),
+        renderHoldings(data.holdings),
+        renderReview(data.review),
+        renderMonitor(data.monitor_status),
+        renderIndices('A 股宽基指数', data.indices, (data.indices || []).length + ' 只'),
+        renderIndices('美股三大指数', data.us, '前一日收盘')
+    ].filter(Boolean).join('');
+}
+
+// 加载日期列表
+async function loadDateList() {
+    try {
+        const r = await fetch('data/snapshots_index.json');
+        const idx = await r.json();
+        const select = document.getElementById('date-select');
+        select.innerHTML = '<option value="">📅 最新 (' + idx.snapshot_count + ' 快照)</option>';
+        idx.dates.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d + ' (' + idx.by_date[d].length + ' 个快照)';
+            select.appendChild(opt);
+        });
+        select.onchange = (e) => {
+            const date = e.target.value;
+            if (!date) {
+                loadLatest();
+            } else {
+                loadDate(date);
+            }
+        };
+    } catch (e) {
+        console.error('加载日期列表失败:', e);
+    }
+}
+
+// 加载最新
+async function loadLatest() {
+    document.getElementById('snapshot-banner').classList.remove('show');
+    document.getElementById('live-text').textContent = 'LIVE';
+    try {
+        const r = await fetch('data/latest.json');
+        const data = await r.json();
+        document.getElementById('content-area').innerHTML = renderData(data);
+        document.getElementById('date-select').value = '';
+    } catch (e) {
+        document.getElementById('content-area').innerHTML = '<div class="empty">加载失败:' + e.message + '</div>';
+    }
+}
+
+// 加载某日最新快照
+async function loadDate(date) {
+    try {
+        const idxR = await fetch('data/snapshots_index.json');
+        const idx = await idxR.json();
+        const snaps = idx.by_date[date];
+        if (!snaps || snaps.length === 0) {
+            alert('该日无快照');
+            return;
+        }
+        // 加载最新一份
+        await loadSnapshot(date, snaps[0].file);
+    } catch (e) {
+        alert('加载失败: ' + e.message);
+    }
+}
+
+// 加载某快照
+async function loadSnapshot(date, filename) {
+    try {
+        const r = await fetch('history/' + filename);
+        const data = await r.json();
+        document.getElementById('content-area').innerHTML = renderData(data);
+        document.getElementById('live-text').textContent = '历史';
+        const banner = document.getElementById('snapshot-banner');
+        banner.classList.add('show');
+        document.getElementById('banner-time').textContent = data.generated_at || filename;
+        document.getElementById('banner-source').textContent = `📦 ${filename}`;
+    } catch (e) {
+        alert('快照加载失败: ' + e);
+    }
+}
+
+// 初始化:用 INITIAL_DATA 立即渲染,然后异步加载日期列表
+document.getElementById('content-area').innerHTML = renderData(INITIAL_DATA);
+loadDateList();
+
+// 每 15 分钟自动刷新最新数据
+setInterval(loadLatest, 15 * 60 * 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎤 演唱会抢票监控</title>
+<style>
+:root {
+  --ef-bg: #0f1923;
+  --ef-card: #1a2535;
+  --ef-card-hover: #212f42;
+  --ef-border: #2a3a50;
+  --ef-blue: #3b82f6;
+  --ef-text: #e2e8f0;
+  --ef-muted: #94a3b8;
+  --urgent: #ef4444;
+  --hot: #f97316;
+  --soon: #eab308;
+  --upcoming: #22c55e;
+  --future: #06b6d4;
+  --past: #64748b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--ef-bg); color: var(--ef-text); font-family: -apple-system, 'PingFang SC', sans-serif; font-size: 14px; min-height: 100vh; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+/* 顶部标题 */
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.header h1 { font-size: 22px; font-weight: 700; color: var(--ef-blue); }
+.header h1 span { font-size: 20px; margin-right: 8px; }
+.header .meta { color: var(--ef-muted); font-size: 12px; }
+.header .meta strong { color: var(--ef-text); }
+
+/* 歌手筛选 */
+.filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--ef-border); background: var(--ef-card); color: var(--ef-muted); cursor: pointer; font-size: 13px; transition: all 0.2s; }
+.filter-btn:hover { border-color: var(--ef-blue); color: var(--ef-blue); }
+.filter-btn.active { background: var(--ef-blue); color: #fff; border-color: var(--ef-blue); }
+.filter-btn .count { background: rgba(255,255,255,0.2); border-radius: 10px; padding: 1px 6px; font-size: 11px; margin-left: 4px; }
+
+/* 统计卡片 */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--ef-card); border: 1px solid var(--ef-border); border-radius: 10px; padding: 14px; text-align: center; }
+.stat-card .num { font-size: 28px; font-weight: 700; line-height: 1; }
+.stat-card .label { font-size: 12px; color: var(--ef-muted); margin-top: 4px; }
+.stat-card.urgent .num { color: var(--urgent); }
+.stat-card.hot .num { color: var(--hot); }
+.stat-card.soon .num { color: var(--soon); }
+.stat-card.upcoming .num { color: var(--upcoming); }
+.stat-card.total .num { color: var(--ef-blue); }
+
+/* 紧急度标签 */
+.urgency-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+.urgency-today { background: rgba(239,68,68,0.2); color: var(--urgent); }
+.urgency-hot { background: rgba(249,115,22,0.2); color: var(--hot); }
+.urgency-soon { background: rgba(234,179,8,0.2); color: var(--soon); }
+.urgency-upcoming { background: rgba(34,197,94,0.2); color: var(--upcoming); }
+.urgency-future { background: rgba(6,182,212,0.2); color: var(--future); }
+.urgency-unknown { background: rgba(148,163,184,0.2); color: var(--past); }
+.urgency-past { background: rgba(100,116,139,0.2); color: var(--past); }
+
+/* 演唱会卡片 */
+.concert-list { display: flex; flex-direction: column; gap: 12px; }
+.concert-card { background: var(--ef-card); border: 1px solid var(--ef-border); border-radius: 12px; padding: 16px 20px; transition: all 0.2s; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+.concert-card:hover { border-color: var(--ef-blue); background: var(--ef-card-hover); }
+.concert-card .tag-col { font-size: 28px; text-align: center; width: 44px; }
+.concert-card .info { min-width: 0; }
+.concert-card .artist { font-size: 16px; font-weight: 700; color: var(--ef-text); margin-bottom: 4px; }
+.concert-card .name { font-size: 13px; color: var(--ef-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.concert-card .meta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.concert-card .meta-item { font-size: 12px; color: var(--ef-muted); display: flex; align-items: center; gap: 4px; }
+.concert-card .meta-item .icon { font-size: 11px; }
+.concert-card .right-col { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.concert-card .source { font-size: 11px; color: var(--ef-muted); background: var(--ef-bg); padding: 2px 8px; border-radius: 6px; }
+.concert-card a.source-link { text-decoration: none; }
+.concert-card a.source-link:hover .source { background: var(--ef-blue); color: #fff; }
+
+/* 紧急抢票提示 */
+.alert-banner { background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(249,115,22,0.15)); border: 1px solid var(--urgent); border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.alert-banner .icon { font-size: 24px; }
+.alert-banner .text { flex: 1; }
+.alert-banner .title { font-size: 15px; font-weight: 700; color: var(--urgent); }
+.alert-banner .desc { font-size: 13px; color: var(--ef-muted); margin-top: 2px; }
+.alert-banner.hidden { display: none; }
+
+/* 歌手单独区块 */
+.artist-section { margin-bottom: 32px; }
+.artist-section h2 { font-size: 16px; font-weight: 700; color: var(--ef-text); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--ef-border); display: flex; align-items: center; gap: 8px; }
+.artist-section h2 .emoji { font-size: 20px; }
+
+/* 无数据提示 */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--ef-muted); }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* 加载状态 */
+.loading { text-align: center; padding: 40px; color: var(--ef-muted); }
+.loading::after { content: '...'; animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* 底部 */
+.footer { text-align: center; padding: 20px; color: var(--ef-muted); font-size: 12px; border-top: 1px solid var(--ef-border); margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><span>🎤</span>演唱会抢票监控</h1>
+    <div class="meta">
+      更新: <strong id="update-time">加载中</strong> · 
+      共 <strong id="total-count">0</strong> 场
+    </div>
+  </div>
+
+  <!-- 紧急抢票提示 -->
+  <div id="alert-banner" class="alert-banner hidden">
+    <div class="icon">🔥</div>
+    <div class="text">
+      <div class="title" id="alert-title">紧急抢票！</div>
+      <div class="desc" id="alert-desc">以下演唱会即将开售/正在热卖中</div>
+    </div>
+  </div>
+
+  <!-- 歌手筛选 -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-artist="全部">全部<span class="count" id="count-all">0</span></button>
+  </div>
+
+  <!-- 统计 -->
+  <div class="stats" id="stats">
+    <div class="stat-card total"><div class="num" id="stat-total">0</div><div class="label">总场次</div></div>
+    <div class="stat-card hot"><div class="num" id="stat-hot">0</div><div class="label">3天内</div></div>
+    <div class="stat-card soon"><div class="num" id="stat-soon">0</div><div class="label">7天内</div></div>
+    <div class="stat-card upcoming"><div class="num" id="stat-upcoming">0</div><div class="label">30天内</div></div>
+  </div>
+
+  <!-- 演唱会列表 -->
+  <div class="concert-list" id="concert-list">
+    <div class="loading">正在加载数据</div>
+  </div>
+
+  <div class="footer">
+    🎤 演唱会抢票监控 · 数据来源：大麦网/纷玩岛/猫眼/票星球/urbtix · 请以官方为准，本系统仅供参考
+  </div>
+</div>
+
+<script>
+const ARTIST_ICONS = {
+  '容祖儿': '👩', '陈奕迅': '👨', '蔡依林': '👩', 
+  '周杰伦': '🎤', '容祖儿': '👩', '陈奕迅': '👨', '蔡依林': '👩',
+  '张敬轩': '👨', '谢霆锋': '👨', '卫兰': '👩'
+};
+
+const ARTIST_COLORS = {
+  '周杰伦': '#ef4444', '容祖儿': '#ec4899', '陈奕迅': '#3b82f6', '蔡依林': '#f59e0b',
+  '张敬轩': '#10b981', '谢霆锋': '#6366f1', '卫兰': '#8b5cf6'
+};
+
+// 歌手列表
+const ARTISTS = ['周杰伦', '容祖儿', '陈奕迅', '蔡依林', '张敬轩', '谢霆锋', '卫兰'];
+
+// 加载数据
+async function loadData() {
+  try {
+    const resp = await fetch('data/concert_tickets.json?t=' + Date.now());
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    render(data);
+  } catch (e) {
+    document.getElementById('concert-list').innerHTML =
+      `<div class="empty-state"><div class="icon">🎤</div><p>暂无数据<br><small>${e.message}</small></p></div>`;
+  }
+}
+
+function getUrgencyClass(urgency) {
+  const map = {
+    'today': 'urgency-today',
+    'hot': 'urgency-hot', 
+    'soon': 'urgency-soon',
+    'upcoming': 'urgency-upcoming',
+    'future': 'urgency-future',
+    'unknown': 'urgency-unknown',
+    'past': 'urgency-past'
+  };
+  return map[urgency] || 'urgency-unknown';
+}
+
+function getUrgencyLabel(urgency) {
+  const map = {
+    'today': '🔥 今日开票',
+    'hot': '⚡ 3天内',
+    'soon': '📌 7天内',
+    'upcoming': '📅 30天内',
+    'future': '🗓️ 更久',
+    'unknown': '📅 待确认',
+    'past': '⏰ 已结束'
+  };
+  return map[urgency] || '📅';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '时间待定';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    return `${d.getMonth()+1}月${d.getDate()}日`;
+  } catch { return dateStr; }
+}
+
+function render(data) {
+  const tickets = data.tickets || [];
+  const updated = data.updated_at || '';
+  
+  document.getElementById('update-time').textContent = updated;
+  document.getElementById('total-count').textContent = tickets.length;
+
+  // 统计
+  const stats = { total: tickets.length, hot: 0, soon: 0, upcoming: 0 };
+  for (const t of tickets) {
+    if (t.urgency === 'hot') stats.hot++;
+    else if (t.urgency === 'soon') stats.soon++;
+    else if (t.urgency === 'upcoming') stats.upcoming++;
+  }
+  document.getElementById('stat-total').textContent = stats.total;
+  document.getElementById('stat-hot').textContent = stats.hot;
+  document.getElementById('stat-soon').textContent = stats.soon;
+  document.getElementById('stat-upcoming').textContent = stats.upcoming;
+
+  // 紧急抢票
+  const hotTickets = tickets.filter(t => t.urgency === 'today' || t.urgency === 'hot');
+  const banner = document.getElementById('alert-banner');
+  if (hotTickets.length > 0) {
+    banner.classList.remove('hidden');
+    document.getElementById('alert-title').textContent = `🔥 ${hotTickets.length} 场演唱会即将/正在抢票！`;
+    document.getElementById('alert-desc').textContent = hotTickets.slice(0,3).map(t => `${t.artist} - ${t.name}`).join(' · ');
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  // 筛选按钮
+  const filterContainer = document.getElementById('filters');
+  filterContainer.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn active';
+  allBtn.dataset.artist = '全部';
+  allBtn.innerHTML = `全部<span class="count">${tickets.length}</span>`;
+  allBtn.onclick = () => renderFiltered('全部', tickets);
+  filterContainer.appendChild(allBtn);
+
+  for (const artist of ARTISTS) {
+    const count = tickets.filter(t => t.artist === artist).length;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.artist = artist;
+    btn.innerHTML = `${ARTIST_ICONS[artist] || '🎤'}${artist}<span class="count">${count}</span>`;
+    btn.onclick = () => renderFiltered(artist, tickets);
+    filterContainer.appendChild(btn);
+  }
+
+  // 默认显示全部
+  renderFiltered('全部', tickets);
+}
+
+function renderFiltered(artist, tickets) {
+  // 更新按钮状态
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.artist === artist);
+  });
+
+  const list = document.getElementById('concert-list');
+  const filtered = artist === '全部' ? tickets : tickets.filter(t => t.artist === artist);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">🎤</div><p>暂无 ${artist} 演唱会数据<br><small>稍后刷新试试</small></p></div>`;
+    return;
+  }
+
+  // 按歌手分组
+  if (artist === '全部') {
+    const byArtist = {};
+    for (const t of filtered) {
+      if (!byArtist[t.artist]) byArtist[t.artist] = [];
+      byArtist[t.artist].push(t);
+    }
+    let html = '';
+    for (const a of ARTISTS) {
+      if (!byArtist[a] || byArtist[a].length === 0) continue;
+      html += `<div class="artist-section">
+        <h2><span class="emoji">${ARTIST_ICONS[a] || '🎤'}</span>${a}</h2>`;
+      for (const t of byArtist[a]) {
+        html += renderCard(t);
+      }
+      html += `</div>`;
+    }
+    list.innerHTML = html;
+  } else {
+    list.innerHTML = filtered.map(t => renderCard(t)).join('');
+  }
+}
+
+function renderCard(t) {
+  const icon = ARTIST_ICONS[t.artist] || '🎤';
+  const color = ARTIST_COLORS[t.artist] || '#3b82f6';
+  const urgencyClass = getUrgencyClass(t.urgency);
+  const urgencyLabel = getUrgencyLabel(t.urgency);
+  const dateDisplay = formatDate(t.date);
+  
+  const cityIcon = t.location.includes('香港') || t.location.includes('澳门') ? '🌏' : '📍';
+  const sourceDisplay = t.source || '网络';
+
+  return `<div class="concert-card">
+  <div class="tag-col">${icon}</div>
+  <div class="info">
+    <div class="artist" style="color:${color}">${t.artist}</div>
+    <div class="name">${escapeHtml(t.name || '演唱会')}</div>
+    <div class="meta-row">
+      <span class="meta-item"><span class="icon">📅</span>${dateDisplay}</span>
+      <span class="meta-item"><span class="icon">${cityIcon}</span>${escapeHtml(t.location || '待定')}</span>
+      <span class="meta-item"><span class="icon">🏷️</span>${t.price || '待定'}</span>
+    </div>
+  </div>
+  <div class="right-col">
+    <span class="${urgencyClass} urgency-tag">${urgencyLabel}</span>
+    <a href="${escapeHtml(t.url || '#')}" target="_blank" rel="noopener noreferrer" class="source-link">
+      <span class="source">${sourceDisplay} →</span>
+    </a>
+  </div>
+</div>`;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// 每2分钟自动刷新
+loadData();
+setInterval(loadData, 120000);
+</script>
+</body>
+</html>

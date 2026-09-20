@@ -1,0 +1,2020 @@
+{
+  "date": "2026-09-03",
+  "generated_at": "2026-09-03T18:19:34.467622",
+  "summary": {
+    "total_scanned": 75,
+    "beat_count": 43,
+    "miss_count": 8,
+    "inline_count": 20,
+    "reporting_today_count": 0
+  },
+  "reporting_today": [],
+  "recent_beat": [
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.95,
+      "latestActual": 5.75,
+      "latestEstimate": 1.83,
+      "latestSurprise": 215.02,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": 1.95,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": 1.83,
+          "actual": 5.75,
+          "surprise": 215.02
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 1.65,
+          "actual": 2.78,
+          "surprise": 68.18
+        },
+        {
+          "date": "2026-02-05",
+          "estimate": 1.95,
+          "actual": 1.95,
+          "surprise": 0.22
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+215.0%)"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corporation",
+      "nextEarningsDate": "2026-11-17",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.47,
+      "latestActual": 2.22,
+      "latestEstimate": 2.09,
+      "latestSurprise": 6.16,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-11-17",
+          "estimate": 2.47,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-08-26",
+          "estimate": 2.09,
+          "actual": 2.22,
+          "surprise": 6.16
+        },
+        {
+          "date": "2026-05-20",
+          "estimate": 1.77,
+          "actual": 1.87,
+          "surprise": 5.54
+        },
+        {
+          "date": "2026-02-25",
+          "estimate": 1.54,
+          "actual": 1.62,
+          "surprise": 5.32
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+6.2%)"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.98,
+      "latestActual": 2.02,
+      "latestEstimate": 1.89,
+      "latestSurprise": 6.74,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": 1.98,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": 1.89,
+          "actual": 2.02,
+          "surprise": 6.74
+        },
+        {
+          "date": "2026-04-30",
+          "estimate": 1.94,
+          "actual": 2.01,
+          "surprise": 3.46
+        },
+        {
+          "date": "2026-01-29",
+          "estimate": 2.67,
+          "actual": 2.84,
+          "surprise": 6.34
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+6.7%)"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft Corporation",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 4.72,
+      "latestActual": 4.74,
+      "latestEstimate": 4.24,
+      "latestSurprise": 11.81,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 4.72,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-29",
+          "estimate": 4.24,
+          "actual": 4.74,
+          "surprise": 11.81
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 4.07,
+          "actual": 4.27,
+          "surprise": 4.9
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 3.92,
+          "actual": 4.14,
+          "surprise": 5.69
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+11.8%)"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 3.01,
+      "latestActual": 9.11,
+      "latestEstimate": 2.9,
+      "latestSurprise": 214.23,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 3.01,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-22",
+          "estimate": 2.9,
+          "actual": 9.11,
+          "surprise": 214.23
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 2.67,
+          "actual": 5.11,
+          "surprise": 91.59
+        },
+        {
+          "date": "2026-02-04",
+          "estimate": 2.64,
+          "actual": 2.82,
+          "surprise": 7.01
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+214.2%)"
+    }
+  ],
+  "recent_miss": [
+    {
+      "symbol": "TSLA",
+      "name": "Tesla, Inc.",
+      "nextEarningsDate": "2026-10-21",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.45,
+      "latestActual": 0.33,
+      "latestEstimate": 0.54,
+      "latestSurprise": -39.15,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-21",
+          "estimate": 0.45,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-22",
+          "estimate": 0.54,
+          "actual": 0.33,
+          "surprise": -39.15
+        },
+        {
+          "date": "2026-04-22",
+          "estimate": 0.35,
+          "actual": 0.41,
+          "surprise": 17.15
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 0.45,
+          "actual": 0.5,
+          "surprise": 10.96
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-39.1%)"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms, Inc.",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 6.53,
+      "latestActual": 6.18,
+      "latestEstimate": 7.22,
+      "latestSurprise": -14.42,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 6.53,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-29",
+          "estimate": 7.22,
+          "actual": 6.18,
+          "surprise": -14.42
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 6.66,
+          "actual": 10.44,
+          "surprise": 56.79
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 8.22,
+          "actual": 8.88,
+          "surprise": 8.0
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-14.4%)"
+    },
+    {
+      "symbol": "BA",
+      "name": "Boeing Company (The)",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": -0.14,
+      "latestActual": -0.76,
+      "latestEstimate": -0.31,
+      "latestSurprise": -141.48,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": -0.14,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-28",
+          "estimate": -0.31,
+          "actual": -0.76,
+          "surprise": -141.48
+        },
+        {
+          "date": "2026-04-22",
+          "estimate": -0.67,
+          "actual": -0.2,
+          "surprise": 70.26
+        },
+        {
+          "date": "2026-01-27",
+          "estimate": -0.41,
+          "actual": 9.92,
+          "surprise": 2525.31
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-141.5%)"
+    },
+    {
+      "symbol": "LCID",
+      "name": "Lucid Group, Inc.",
+      "nextEarningsDate": "2026-11-04",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": -2.28,
+      "latestActual": -2.78,
+      "latestEstimate": -2.41,
+      "latestSurprise": -15.35,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-11-04",
+          "estimate": -2.28,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-08-04",
+          "estimate": -2.41,
+          "actual": -2.78,
+          "surprise": -15.35
+        },
+        {
+          "date": "2026-05-05",
+          "estimate": -2.3,
+          "actual": -2.82,
+          "surprise": -22.79
+        },
+        {
+          "date": "2026-02-24",
+          "estimate": -2.67,
+          "actual": -3.08,
+          "surprise": -15.18
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-15.3%)"
+    },
+    {
+      "symbol": "COIN",
+      "name": "Coinbase Global, Inc.",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": -0.14,
+      "latestActual": -1.36,
+      "latestEstimate": -0.23,
+      "latestSurprise": -487.47,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": -0.14,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": -0.23,
+          "actual": -1.36,
+          "surprise": -487.47
+        },
+        {
+          "date": "2026-05-07",
+          "estimate": 0.04,
+          "actual": -1.49,
+          "surprise": -3458.88
+        },
+        {
+          "date": "2026-02-12",
+          "estimate": 0.94,
+          "actual": -2.49,
+          "surprise": -364.89
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-487.5%)"
+    }
+  ],
+  "upcoming": [
+    {
+      "symbol": "ADBE",
+      "name": "Adobe Inc.",
+      "nextEarningsDate": "2026-09-10",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 6.09,
+      "latestActual": 5.96,
+      "latestEstimate": 5.81,
+      "latestSurprise": 2.5,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-10",
+          "estimate": 6.09,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-11",
+          "estimate": 5.81,
+          "actual": 5.96,
+          "surprise": 2.5
+        },
+        {
+          "date": "2026-03-12",
+          "estimate": 5.87,
+          "actual": 6.06,
+          "surprise": 3.18
+        },
+        {
+          "date": "2025-12-10",
+          "estimate": 5.4,
+          "actual": 5.5,
+          "surprise": 1.9
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+2.5%)"
+    },
+    {
+      "symbol": "ORCL",
+      "name": "Oracle Corporation",
+      "nextEarningsDate": "2026-09-10",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.74,
+      "latestActual": 2.11,
+      "latestEstimate": 1.96,
+      "latestSurprise": 7.52,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-10",
+          "estimate": 1.74,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-10",
+          "estimate": 1.96,
+          "actual": 2.11,
+          "surprise": 7.52
+        },
+        {
+          "date": "2026-03-10",
+          "estimate": 1.69,
+          "actual": 1.79,
+          "surprise": 5.69
+        },
+        {
+          "date": "2025-12-10",
+          "estimate": 1.64,
+          "actual": 2.26,
+          "surprise": 38.04
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+7.5%)"
+    },
+    {
+      "symbol": "COST",
+      "name": "Costco Wholesale Corporation",
+      "nextEarningsDate": "2026-09-24",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 6.56,
+      "latestActual": 4.93,
+      "latestEstimate": 4.92,
+      "latestSurprise": 0.14,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-24",
+          "estimate": 6.56,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-05-28",
+          "estimate": 4.92,
+          "actual": 4.93,
+          "surprise": 0.14
+        },
+        {
+          "date": "2026-03-05",
+          "estimate": 4.54,
+          "actual": 4.58,
+          "surprise": 0.78
+        },
+        {
+          "date": "2025-12-11",
+          "estimate": 4.28,
+          "actual": 4.5,
+          "surprise": 5.26
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+0.1%)"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron Technology, Inc.",
+      "nextEarningsDate": "2026-09-30",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 31.28,
+      "latestActual": 25.11,
+      "latestEstimate": 20.69,
+      "latestSurprise": 21.39,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-30",
+          "estimate": 31.28,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-24",
+          "estimate": 20.69,
+          "actual": 25.11,
+          "surprise": 21.39
+        },
+        {
+          "date": "2026-03-18",
+          "estimate": 9.16,
+          "actual": 12.2,
+          "surprise": 33.21
+        },
+        {
+          "date": "2025-12-17",
+          "estimate": 3.96,
+          "actual": 4.78,
+          "surprise": 20.58
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+21.4%)"
+    },
+    {
+      "symbol": "NKE",
+      "name": "Nike, Inc.",
+      "nextEarningsDate": "2026-10-01",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.45,
+      "latestActual": 0.72,
+      "latestEstimate": 0.13,
+      "latestSurprise": 466.13,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-01",
+          "estimate": 0.45,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-30",
+          "estimate": 0.13,
+          "actual": 0.72,
+          "surprise": 466.13
+        },
+        {
+          "date": "2026-03-31",
+          "estimate": 0.28,
+          "actual": 0.35,
+          "surprise": 24.27
+        },
+        {
+          "date": "2025-12-18",
+          "estimate": 0.37,
+          "actual": 0.53,
+          "surprise": 41.9
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+466.1%)"
+    },
+    {
+      "symbol": "PEP",
+      "name": "Pepsico, Inc.",
+      "nextEarningsDate": "2026-10-08",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.3,
+      "latestActual": 2.2,
+      "latestEstimate": 2.21,
+      "latestSurprise": -0.37,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-08",
+          "estimate": 2.3,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-09",
+          "estimate": 2.21,
+          "actual": 2.2,
+          "surprise": -0.37
+        },
+        {
+          "date": "2026-04-16",
+          "estimate": 1.55,
+          "actual": 1.61,
+          "surprise": 3.75
+        },
+        {
+          "date": "2026-02-03",
+          "estimate": 2.24,
+          "actual": 2.26,
+          "surprise": 1.02
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (-0.4%)"
+    },
+    {
+      "symbol": "JPM",
+      "name": "JP Morgan Chase & Co.",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 5.91,
+      "latestActual": 6.14,
+      "latestEstimate": 5.8,
+      "latestSurprise": 5.86,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 5.91,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 5.8,
+          "actual": 6.14,
+          "surprise": 5.86
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 5.51,
+          "actual": 5.94,
+          "surprise": 7.78
+        },
+        {
+          "date": "2026-01-13",
+          "estimate": 4.82,
+          "actual": 4.63,
+          "surprise": -3.91
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+5.9%)"
+    },
+    {
+      "symbol": "WFC",
+      "name": "Wells Fargo & Company",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.84,
+      "latestActual": 2.0,
+      "latestEstimate": 1.72,
+      "latestSurprise": 16.38,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 1.84,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 1.72,
+          "actual": 2.0,
+          "surprise": 16.38
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 1.6,
+          "actual": 1.56,
+          "surprise": -2.67
+        },
+        {
+          "date": "2026-01-14",
+          "estimate": 1.67,
+          "actual": 1.62,
+          "surprise": -2.85
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+16.4%)"
+    },
+    {
+      "symbol": "GS",
+      "name": "Goldman Sachs Group, Inc. (The)",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 16.43,
+      "latestActual": 20.98,
+      "latestEstimate": 14.54,
+      "latestSurprise": 44.27,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 16.43,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 14.54,
+          "actual": 20.98,
+          "surprise": 44.27
+        },
+        {
+          "date": "2026-04-13",
+          "estimate": 16.24,
+          "actual": 17.55,
+          "surprise": 8.09
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 11.76,
+          "actual": 14.01,
+          "surprise": 19.09
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+44.3%)"
+    },
+    {
+      "symbol": "JNJ",
+      "name": "Johnson & Johnson",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.42,
+      "latestActual": 2.9,
+      "latestEstimate": 2.85,
+      "latestSurprise": 1.58,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 2.42,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-15",
+          "estimate": 2.85,
+          "actual": 2.9,
+          "surprise": 1.58
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 2.68,
+          "actual": 2.7,
+          "surprise": 0.85
+        },
+        {
+          "date": "2026-01-21",
+          "estimate": 2.46,
+          "actual": 2.46,
+          "surprise": -0.11
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+1.6%)"
+    },
+    {
+      "symbol": "BAC",
+      "name": "Bank of America Corporation",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.2,
+      "latestActual": 1.21,
+      "latestEstimate": 1.12,
+      "latestSurprise": 7.74,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 1.2,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 1.12,
+          "actual": 1.21,
+          "surprise": 7.74
+        },
+        {
+          "date": "2026-04-15",
+          "estimate": 1.02,
+          "actual": 1.11,
+          "surprise": 8.78
+        },
+        {
+          "date": "2026-01-14",
+          "estimate": 0.95,
+          "actual": 0.98,
+          "surprise": 2.69
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+7.7%)"
+    },
+    {
+      "symbol": "MS",
+      "name": "Morgan Stanley",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 3.16,
+      "latestActual": 3.46,
+      "latestEstimate": 2.93,
+      "latestSurprise": 17.94,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 3.16,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-15",
+          "estimate": 2.93,
+          "actual": 3.46,
+          "surprise": 17.94
+        },
+        {
+          "date": "2026-04-15",
+          "estimate": 3.02,
+          "actual": 3.43,
+          "surprise": 13.66
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 2.45,
+          "actual": 2.68,
+          "surprise": 9.41
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+17.9%)"
+    },
+    {
+      "symbol": "BLK",
+      "name": "BlackRock, Inc.",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 14.31,
+      "latestActual": 13.91,
+      "latestEstimate": 12.69,
+      "latestSurprise": 9.62,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 14.31,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-15",
+          "estimate": 12.69,
+          "actual": 13.91,
+          "surprise": 9.62
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 11.46,
+          "actual": 12.53,
+          "surprise": 9.35
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 12.19,
+          "actual": 13.16,
+          "surprise": 7.94
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+9.6%)"
+    },
+    {
+      "symbol": "ABT",
+      "name": "Abbott Laboratories",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.42,
+      "latestActual": 1.31,
+      "latestEstimate": 1.28,
+      "latestSurprise": 2.61,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 1.42,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-16",
+          "estimate": 1.28,
+          "actual": 1.31,
+          "surprise": 2.61
+        },
+        {
+          "date": "2026-04-16",
+          "estimate": 1.15,
+          "actual": 1.15,
+          "surprise": 0.33
+        },
+        {
+          "date": "2026-01-22",
+          "estimate": 1.49,
+          "actual": 1.5,
+          "surprise": 0.34
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+2.6%)"
+    },
+    {
+      "symbol": "SCHW",
+      "name": "Charles Schwab Corporation (The",
+      "nextEarningsDate": "2026-10-15",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.67,
+      "latestActual": 1.62,
+      "latestEstimate": 1.55,
+      "latestSurprise": 4.55,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-15",
+          "estimate": 1.67,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-21",
+          "estimate": 1.55,
+          "actual": 1.62,
+          "surprise": 4.55
+        },
+        {
+          "date": "2026-04-16",
+          "estimate": 1.4,
+          "actual": 1.43,
+          "surprise": 2.48
+        },
+        {
+          "date": "2026-01-21",
+          "estimate": 1.39,
+          "actual": 1.39,
+          "surprise": -0.27
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+4.5%)"
+    },
+    {
+      "symbol": "NFLX",
+      "name": "Netflix, Inc.",
+      "nextEarningsDate": "2026-10-20",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.82,
+      "latestActual": 0.8,
+      "latestEstimate": 0.79,
+      "latestSurprise": 1.45,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-20",
+          "estimate": 0.82,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-16",
+          "estimate": 0.79,
+          "actual": 0.8,
+          "surprise": 1.45
+        },
+        {
+          "date": "2026-04-16",
+          "estimate": 1.25,
+          "actual": 1.23,
+          "surprise": -1.4
+        },
+        {
+          "date": "2026-01-20",
+          "estimate": 0.55,
+          "actual": 0.56,
+          "surprise": 1.43
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+1.4%)"
+    },
+    {
+      "symbol": "KO",
+      "name": "Coca-Cola Company (The)",
+      "nextEarningsDate": "2026-10-20",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.88,
+      "latestActual": 0.97,
+      "latestEstimate": 0.93,
+      "latestSurprise": 4.05,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-20",
+          "estimate": 0.88,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-28",
+          "estimate": 0.93,
+          "actual": 0.97,
+          "surprise": 4.05
+        },
+        {
+          "date": "2026-04-28",
+          "estimate": 0.81,
+          "actual": 0.86,
+          "surprise": 5.88
+        },
+        {
+          "date": "2026-02-10",
+          "estimate": 0.56,
+          "actual": 0.58,
+          "surprise": 2.69
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+4.0%)"
+    },
+    {
+      "symbol": "DHR",
+      "name": "Danaher Corporation",
+      "nextEarningsDate": "2026-10-20",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.92,
+      "latestActual": 1.94,
+      "latestEstimate": 1.84,
+      "latestSurprise": 5.28,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-20",
+          "estimate": 1.92,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-21",
+          "estimate": 1.84,
+          "actual": 1.94,
+          "surprise": 5.28
+        },
+        {
+          "date": "2026-04-21",
+          "estimate": 1.94,
+          "actual": 2.06,
+          "surprise": 6.45
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 2.19,
+          "actual": 2.23,
+          "surprise": 1.99
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+5.3%)"
+    },
+    {
+      "symbol": "VZ",
+      "name": "Verizon Communications Inc.",
+      "nextEarningsDate": "2026-10-20",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.28,
+      "latestActual": 1.3,
+      "latestEstimate": 1.27,
+      "latestSurprise": 2.71,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-20",
+          "estimate": 1.28,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-24",
+          "estimate": 1.27,
+          "actual": 1.3,
+          "surprise": 2.71
+        },
+        {
+          "date": "2026-04-27",
+          "estimate": 1.21,
+          "actual": 1.28,
+          "surprise": 5.81
+        },
+        {
+          "date": "2026-01-30",
+          "estimate": 1.06,
+          "actual": 1.09,
+          "surprise": 3.28
+        }
+      ],
+      "verdictCode": "inline",
+      "verdictCN": "📊 符合预期 (+2.7%)"
+    },
+    {
+      "symbol": "GE",
+      "name": "GE Aerospace",
+      "nextEarningsDate": "2026-10-20",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.99,
+      "latestActual": 2.02,
+      "latestEstimate": 1.86,
+      "latestSurprise": 8.62,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-20",
+          "estimate": 1.99,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-16",
+          "estimate": 1.86,
+          "actual": 2.02,
+          "surprise": 8.62
+        },
+        {
+          "date": "2026-04-21",
+          "estimate": 1.6,
+          "actual": 1.86,
+          "surprise": 16.31
+        },
+        {
+          "date": "2026-01-22",
+          "estimate": 1.43,
+          "actual": 1.57,
+          "surprise": 9.81
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+8.6%)"
+    }
+  ],
+  "significant": [
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.95,
+      "latestActual": 5.75,
+      "latestEstimate": 1.83,
+      "latestSurprise": 215.02,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": 1.95,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": 1.83,
+          "actual": 5.75,
+          "surprise": 215.02
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 1.65,
+          "actual": 2.78,
+          "surprise": 68.18
+        },
+        {
+          "date": "2026-02-05",
+          "estimate": 1.95,
+          "actual": 1.95,
+          "surprise": 0.22
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+215.0%)"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla, Inc.",
+      "nextEarningsDate": "2026-10-21",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.45,
+      "latestActual": 0.33,
+      "latestEstimate": 0.54,
+      "latestSurprise": -39.15,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-21",
+          "estimate": 0.45,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-22",
+          "estimate": 0.54,
+          "actual": 0.33,
+          "surprise": -39.15
+        },
+        {
+          "date": "2026-04-22",
+          "estimate": 0.35,
+          "actual": 0.41,
+          "surprise": 17.15
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 0.45,
+          "actual": 0.5,
+          "surprise": 10.96
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-39.1%)"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corporation",
+      "nextEarningsDate": "2026-11-17",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.47,
+      "latestActual": 2.22,
+      "latestEstimate": 2.09,
+      "latestSurprise": 6.16,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-11-17",
+          "estimate": 2.47,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-08-26",
+          "estimate": 2.09,
+          "actual": 2.22,
+          "surprise": 6.16
+        },
+        {
+          "date": "2026-05-20",
+          "estimate": 1.77,
+          "actual": 1.87,
+          "surprise": 5.54
+        },
+        {
+          "date": "2026-02-25",
+          "estimate": 1.54,
+          "actual": 1.62,
+          "surprise": 5.32
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+6.2%)"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.98,
+      "latestActual": 2.02,
+      "latestEstimate": 1.89,
+      "latestSurprise": 6.74,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": 1.98,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": 1.89,
+          "actual": 2.02,
+          "surprise": 6.74
+        },
+        {
+          "date": "2026-04-30",
+          "estimate": 1.94,
+          "actual": 2.01,
+          "surprise": 3.46
+        },
+        {
+          "date": "2026-01-29",
+          "estimate": 2.67,
+          "actual": 2.84,
+          "surprise": 6.34
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+6.7%)"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms, Inc.",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 6.53,
+      "latestActual": 6.18,
+      "latestEstimate": 7.22,
+      "latestSurprise": -14.42,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 6.53,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-29",
+          "estimate": 7.22,
+          "actual": 6.18,
+          "surprise": -14.42
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 6.66,
+          "actual": 10.44,
+          "surprise": 56.79
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 8.22,
+          "actual": 8.88,
+          "surprise": 8.0
+        }
+      ],
+      "verdictCode": "miss",
+      "verdictCN": "❌ 不及预期 (-14.4%)"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft Corporation",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 4.72,
+      "latestActual": 4.74,
+      "latestEstimate": 4.24,
+      "latestSurprise": 11.81,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 4.72,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-29",
+          "estimate": 4.24,
+          "actual": 4.74,
+          "surprise": 11.81
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 4.07,
+          "actual": 4.27,
+          "surprise": 4.9
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 3.92,
+          "actual": 4.14,
+          "surprise": 5.69
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+11.8%)"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "nextEarningsDate": "2026-10-28",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 3.01,
+      "latestActual": 9.11,
+      "latestEstimate": 2.9,
+      "latestSurprise": 214.23,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-28",
+          "estimate": 3.01,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-22",
+          "estimate": 2.9,
+          "actual": 9.11,
+          "surprise": 214.23
+        },
+        {
+          "date": "2026-04-29",
+          "estimate": 2.67,
+          "actual": 5.11,
+          "surprise": 91.59
+        },
+        {
+          "date": "2026-02-04",
+          "estimate": 2.64,
+          "actual": 2.82,
+          "surprise": 7.01
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+214.2%)"
+    },
+    {
+      "symbol": "CRM",
+      "name": "Salesforce, Inc.",
+      "nextEarningsDate": "2026-12-02",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 3.43,
+      "latestActual": 5.9,
+      "latestEstimate": 3.27,
+      "latestSurprise": 80.36,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-12-02",
+          "estimate": 3.43,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-08-26",
+          "estimate": 3.27,
+          "actual": 5.9,
+          "surprise": 80.36
+        },
+        {
+          "date": "2026-05-27",
+          "estimate": 3.13,
+          "actual": 3.88,
+          "surprise": 24.07
+        },
+        {
+          "date": "2026-02-25",
+          "estimate": 3.05,
+          "actual": 3.81,
+          "surprise": 24.85
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+80.4%)"
+    },
+    {
+      "symbol": "INTC",
+      "name": "Intel Corporation",
+      "nextEarningsDate": "2026-10-22",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 0.39,
+      "latestActual": 0.42,
+      "latestEstimate": 0.22,
+      "latestSurprise": 94.59,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-22",
+          "estimate": 0.39,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-23",
+          "estimate": 0.22,
+          "actual": 0.42,
+          "surprise": 94.59
+        },
+        {
+          "date": "2026-04-23",
+          "estimate": 0.01,
+          "actual": 0.29,
+          "surprise": 2108.68
+        },
+        {
+          "date": "2026-01-22",
+          "estimate": 0.08,
+          "actual": 0.15,
+          "surprise": 81.51
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+94.6%)"
+    },
+    {
+      "symbol": "ORCL",
+      "name": "Oracle Corporation",
+      "nextEarningsDate": "2026-09-10",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.74,
+      "latestActual": 2.11,
+      "latestEstimate": 1.96,
+      "latestSurprise": 7.52,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-10",
+          "estimate": 1.74,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-10",
+          "estimate": 1.96,
+          "actual": 2.11,
+          "surprise": 7.52
+        },
+        {
+          "date": "2026-03-10",
+          "estimate": 1.69,
+          "actual": 1.79,
+          "surprise": 5.69
+        },
+        {
+          "date": "2025-12-10",
+          "estimate": 1.64,
+          "actual": 2.26,
+          "surprise": 38.04
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+7.5%)"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron Technology, Inc.",
+      "nextEarningsDate": "2026-09-30",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 31.28,
+      "latestActual": 25.11,
+      "latestEstimate": 20.69,
+      "latestSurprise": 21.39,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-09-30",
+          "estimate": 31.28,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-06-24",
+          "estimate": 20.69,
+          "actual": 25.11,
+          "surprise": 21.39
+        },
+        {
+          "date": "2026-03-18",
+          "estimate": 9.16,
+          "actual": 12.2,
+          "surprise": 33.21
+        },
+        {
+          "date": "2025-12-17",
+          "estimate": 3.96,
+          "actual": 4.78,
+          "surprise": 20.58
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+21.4%)"
+    },
+    {
+      "symbol": "TXN",
+      "name": "Texas Instruments Incorporated",
+      "nextEarningsDate": "2026-10-27",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.42,
+      "latestActual": 2.14,
+      "latestEstimate": 1.94,
+      "latestSurprise": 10.48,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-27",
+          "estimate": 2.42,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-22",
+          "estimate": 1.94,
+          "actual": 2.14,
+          "surprise": 10.48
+        },
+        {
+          "date": "2026-04-22",
+          "estimate": 1.37,
+          "actual": 1.68,
+          "surprise": 22.76
+        },
+        {
+          "date": "2026-01-27",
+          "estimate": 1.31,
+          "actual": 1.27,
+          "surprise": -2.89
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+10.5%)"
+    },
+    {
+      "symbol": "BAC",
+      "name": "Bank of America Corporation",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.2,
+      "latestActual": 1.21,
+      "latestEstimate": 1.12,
+      "latestSurprise": 7.74,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 1.2,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 1.12,
+          "actual": 1.21,
+          "surprise": 7.74
+        },
+        {
+          "date": "2026-04-15",
+          "estimate": 1.02,
+          "actual": 1.11,
+          "surprise": 8.78
+        },
+        {
+          "date": "2026-01-14",
+          "estimate": 0.95,
+          "actual": 0.98,
+          "surprise": 2.69
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+7.7%)"
+    },
+    {
+      "symbol": "JPM",
+      "name": "JP Morgan Chase & Co.",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 5.91,
+      "latestActual": 6.14,
+      "latestEstimate": 5.8,
+      "latestSurprise": 5.86,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 5.91,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 5.8,
+          "actual": 6.14,
+          "surprise": 5.86
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 5.51,
+          "actual": 5.94,
+          "surprise": 7.78
+        },
+        {
+          "date": "2026-01-13",
+          "estimate": 4.82,
+          "actual": 4.63,
+          "surprise": -3.91
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+5.9%)"
+    },
+    {
+      "symbol": "WFC",
+      "name": "Wells Fargo & Company",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 1.84,
+      "latestActual": 2.0,
+      "latestEstimate": 1.72,
+      "latestSurprise": 16.38,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 1.84,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 1.72,
+          "actual": 2.0,
+          "surprise": 16.38
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 1.6,
+          "actual": 1.56,
+          "surprise": -2.67
+        },
+        {
+          "date": "2026-01-14",
+          "estimate": 1.67,
+          "actual": 1.62,
+          "surprise": -2.85
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+16.4%)"
+    },
+    {
+      "symbol": "LRCX",
+      "name": "Lam Research Corporation",
+      "nextEarningsDate": "2026-10-21",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 2.18,
+      "latestActual": 1.82,
+      "latestEstimate": 1.68,
+      "latestSurprise": 8.1,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-21",
+          "estimate": 2.18,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-29",
+          "estimate": 1.68,
+          "actual": 1.82,
+          "surprise": 8.1
+        },
+        {
+          "date": "2026-04-22",
+          "estimate": 1.36,
+          "actual": 1.47,
+          "surprise": 7.87
+        },
+        {
+          "date": "2026-01-28",
+          "estimate": 1.17,
+          "actual": 1.27,
+          "surprise": 8.7
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+8.1%)"
+    },
+    {
+      "symbol": "GS",
+      "name": "Goldman Sachs Group, Inc. (The)",
+      "nextEarningsDate": "2026-10-13",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 16.43,
+      "latestActual": 20.98,
+      "latestEstimate": 14.54,
+      "latestSurprise": 44.27,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-13",
+          "estimate": 16.43,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-14",
+          "estimate": 14.54,
+          "actual": 20.98,
+          "surprise": 44.27
+        },
+        {
+          "date": "2026-04-13",
+          "estimate": 16.24,
+          "actual": 17.55,
+          "surprise": 8.09
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 11.76,
+          "actual": 14.01,
+          "surprise": 19.09
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+44.3%)"
+    },
+    {
+      "symbol": "MS",
+      "name": "Morgan Stanley",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 3.16,
+      "latestActual": 3.46,
+      "latestEstimate": 2.93,
+      "latestSurprise": 17.94,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 3.16,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-15",
+          "estimate": 2.93,
+          "actual": 3.46,
+          "surprise": 17.94
+        },
+        {
+          "date": "2026-04-15",
+          "estimate": 3.02,
+          "actual": 3.43,
+          "surprise": 13.66
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 2.45,
+          "actual": 2.68,
+          "surprise": 9.41
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+17.9%)"
+    },
+    {
+      "symbol": "MA",
+      "name": "Mastercard Incorporated",
+      "nextEarningsDate": "2026-10-29",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 5.15,
+      "latestActual": 5.04,
+      "latestEstimate": 4.78,
+      "latestSurprise": 5.53,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-29",
+          "estimate": 5.15,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-30",
+          "estimate": 4.78,
+          "actual": 5.04,
+          "surprise": 5.53
+        },
+        {
+          "date": "2026-04-30",
+          "estimate": 4.41,
+          "actual": 4.6,
+          "surprise": 4.23
+        },
+        {
+          "date": "2026-01-29",
+          "estimate": 4.24,
+          "actual": 4.76,
+          "surprise": 12.26
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+5.5%)"
+    },
+    {
+      "symbol": "BLK",
+      "name": "BlackRock, Inc.",
+      "nextEarningsDate": "2026-10-14",
+      "earnHigh": null,
+      "earnLow": null,
+      "earnAvg": 14.31,
+      "latestActual": 13.91,
+      "latestEstimate": 12.69,
+      "latestSurprise": 9.62,
+      "reportingToday": false,
+      "recentQuarters": [
+        {
+          "date": "2026-10-14",
+          "estimate": 14.31,
+          "actual": null,
+          "surprise": null
+        },
+        {
+          "date": "2026-07-15",
+          "estimate": 12.69,
+          "actual": 13.91,
+          "surprise": 9.62
+        },
+        {
+          "date": "2026-04-14",
+          "estimate": 11.46,
+          "actual": 12.53,
+          "surprise": 9.35
+        },
+        {
+          "date": "2026-01-15",
+          "estimate": 12.19,
+          "actual": 13.16,
+          "surprise": 7.94
+        }
+      ],
+      "verdictCode": "beat",
+      "verdictCN": "✅ 超预期 (+9.6%)"
+    }
+  ]
+}
